@@ -39,8 +39,11 @@ import codeu.chat.util.Time;
 import codeu.chat.util.Timeline;
 import codeu.chat.util.Uuid;
 import codeu.chat.util.connections.Connection;
+import codeu.chat.common.ServerInfo;
 
 public final class Server {
+
+  private static final ServerInfo info = new ServerInfo();
 
   private interface Command {
     void onMessage(InputStream in, OutputStream out) throws IOException;
@@ -169,6 +172,16 @@ public final class Server {
 
         Serializers.INTEGER.write(out, NetworkCode.GET_MESSAGES_BY_ID_RESPONSE);
         Serializers.collection(Message.SERIALIZER).write(out, messages);
+      }
+    });
+
+    // Get Up Time of Server
+    this.commands.put(NetworkCode.SERVER_INFO_REQUEST, new Command() {
+      @Override
+      public void onMessage(InputStream in, OutputStream out) throws IOException {
+
+        Serializers.INTEGER.write(out, NetworkCode.SERVER_INFO_RESPONSE);
+        Time.SERIALIZER.write(out, info.startTime);
       }
     });
 

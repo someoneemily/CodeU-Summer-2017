@@ -24,6 +24,8 @@ import codeu.chat.client.core.ConversationContext;
 import codeu.chat.client.core.MessageContext;
 import codeu.chat.client.core.UserContext;
 
+import codeu.chat.common.ServerInfo;
+
 public final class Chat {
 
   // PANELS
@@ -112,6 +114,19 @@ public final class Chat {
       }
     });
 
+    //Add a command to return the Time server has been running when the user enters "info"
+    panel.register("info", new Panel.Command() {
+      @Override
+      public void invoke(Scanner args) {
+        final ServerInfo info = context.getInfo();
+        if (info == null) {
+          System.out.format("ERROR: Failed to retrieve Up Time of server.");
+        } else {
+          System.out.println("Up Time: " + info.startTime);
+        }
+      }
+    });
+
     // U-LIST (user list)
     //
     // Add a command to print all users registered on the server when the user
@@ -168,7 +183,6 @@ public final class Chat {
           System.out.println("ERROR: Missing <username>");
         }
       }
-
       // Find the first user with the given name and return a user context
       // for that user. If no user is found, the function will return null.
       private UserContext findUser(String name) {
