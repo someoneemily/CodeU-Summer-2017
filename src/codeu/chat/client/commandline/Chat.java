@@ -127,7 +127,7 @@ public final class Chat {
         if (info == null) {
           System.out.format("ERROR: Failed to retrieve Up Time of server.");
         } else {
-          System.out.println("Up Time: " + info.startTime);
+          System.out.println("Server up at: " + info.startTime + "\nRunning Duration: " + info.upTime()/1000 + " seconds");
         }
       }
     });

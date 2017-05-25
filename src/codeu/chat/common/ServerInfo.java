@@ -11,4 +11,7 @@ public final class ServerInfo{
     public ServerInfo(Time startTime){
         this.startTime = startTime;
     }
+    public long upTime(){
+        return Time.now().inMs()-(startTime).inMs();
+    }
 }
