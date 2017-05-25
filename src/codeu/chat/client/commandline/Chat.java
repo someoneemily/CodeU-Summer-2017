@@ -23,7 +23,6 @@ import codeu.chat.client.core.Context;
 import codeu.chat.client.core.ConversationContext;
 import codeu.chat.client.core.MessageContext;
 import codeu.chat.client.core.UserContext;
-
 import codeu.chat.common.ServerInfo;
 
 public final class Chat {
@@ -109,12 +108,18 @@ public final class Chat {
         System.out.println("    Add a new user with the given name.");
         System.out.println("  u-sign-in <name>");
         System.out.println("    Sign in as the user with the given name.");
+        System.out.println("  info");
+        System.out.println("    Retrieve how long the server has been running.");
         System.out.println("  exit");
         System.out.println("    Exit the program.");
       }
     });
 
-    //Add a command to return the Time server has been running when the user enters "info"
+    // info
+    //
+    //Add a command to return the amount of time the server has been running
+    //when the user enters "info" while on the root panel.
+    //
     panel.register("info", new Panel.Command() {
       @Override
       public void invoke(Scanner args) {
