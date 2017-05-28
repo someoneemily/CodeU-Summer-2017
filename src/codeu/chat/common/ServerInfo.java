@@ -25,4 +25,8 @@ public final class ServerInfo {
 	public ServerInfo(Uuid version){
 		this.version = version;
 	}
+
+	public Uuid getVersion() {
+		return version;
+	}
 }
