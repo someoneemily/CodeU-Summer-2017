@@ -8,7 +8,7 @@ public final class ServerInfo {
 
 	private final static String SERVER_VERSION = "1.0.0";
 	
-	private final Uuid version;
+	public final Uuid version;
 	public ServerInfo() {
 		Uuid parsed;
 		try {
@@ -26,7 +26,4 @@ public final class ServerInfo {
 		this.version = version;
 	}
 
-	public Uuid getVersion() {
-		return version;
-	}
 }

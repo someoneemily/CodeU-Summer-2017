@@ -23,6 +23,7 @@ import codeu.chat.client.core.Context;
 import codeu.chat.client.core.ConversationContext;
 import codeu.chat.client.core.MessageContext;
 import codeu.chat.client.core.UserContext;
+import codeu.chat.common.ServerInfo;
 
 public final class Chat {
 
@@ -92,6 +93,21 @@ public final class Chat {
 
     final Panel panel = new Panel();
 
+    //INFO
+    
+    panel.register("info", new Panel.Command(){
+    	@Override
+    	public void invoke(Scanner args){
+    		final ServerInfo info = context.getInfo();
+    		if (info == null){
+    			System.out.println("Server did not send a valid info object - no version");
+    			
+    		}else{
+    			System.out.println("Server version:" + info.version);
+    		}
+    	}
+    });
+    
     // HELP
     //
     // Add a command to print a list of all commands and their description when
