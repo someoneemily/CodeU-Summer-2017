@@ -102,7 +102,7 @@ public final class Chat {
     		if (info == null){
     			System.out.println("Server did not send a valid info object - no version");
     			
-    		}else{
+    		} else{
     			System.out.println("Server version:" + info.version);
     		}
     	}
@@ -117,6 +117,8 @@ public final class Chat {
       @Override
       public void invoke(Scanner args) {
         System.out.println("ROOT MODE");
+        System.out.println("  info");
+        System.out.println("    Prints out the version of the server");
         System.out.println("  u-list");
         System.out.println("    List all users.");
         System.out.println("  u-add <name>");
