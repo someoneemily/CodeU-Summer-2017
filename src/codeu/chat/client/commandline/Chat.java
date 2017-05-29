@@ -23,6 +23,7 @@ import codeu.chat.client.core.Context;
 import codeu.chat.client.core.ConversationContext;
 import codeu.chat.client.core.MessageContext;
 import codeu.chat.client.core.UserContext;
+import codeu.chat.common.ServerInfo;
 
 public final class Chat {
 
@@ -107,8 +108,27 @@ public final class Chat {
         System.out.println("    Add a new user with the given name.");
         System.out.println("  u-sign-in <name>");
         System.out.println("    Sign in as the user with the given name.");
+        System.out.println("  info");
+        System.out.println("    Retrieve how long the server has been running.");
         System.out.println("  exit");
         System.out.println("    Exit the program.");
+      }
+    });
+
+    // info
+    //
+    //Add a command to return the amount of time the server has been running
+    //when the user enters "info" while on the root panel.
+    //
+    panel.register("info", new Panel.Command() {
+      @Override
+      public void invoke(Scanner args) {
+        final ServerInfo info = context.getInfo();
+        if (info == null) {
+          System.out.format("ERROR: Failed to retrieve Up Time of server.");
+        } else {
+          System.out.println("Server up at: " + info.startTime + "\nRunning Duration: " + info.upTime()/1000 + " seconds");
+        }
       }
     });
 
@@ -168,7 +188,6 @@ public final class Chat {
           System.out.println("ERROR: Missing <username>");
         }
       }
-
       // Find the first user with the given name and return a user context
       // for that user. If no user is found, the function will return null.
       private UserContext findUser(String name) {
