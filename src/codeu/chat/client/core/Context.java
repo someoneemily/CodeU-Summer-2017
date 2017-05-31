@@ -35,7 +35,7 @@ public final class Context {
   }
 
   public ServerInfo getInfo(){
-	  return view.getInfo();
+	  return ((View)view).getInfo();
   }
   
   public UserContext create(String name) {
