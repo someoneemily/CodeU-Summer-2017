@@ -27,11 +27,8 @@ import codeu.chat.client.core.Context;
 import codeu.chat.client.core.ConversationContext;
 import codeu.chat.client.core.MessageContext;
 import codeu.chat.client.core.UserContext;
-<<<<<<< Upstream, based on origin/master
 import codeu.chat.common.ServerInfo;
-=======
 import codeu.chat.util.Tokenizer;
->>>>>>> 0ac8b68 chat + panel (tokenizer)
 
 public final class Chat {
 
