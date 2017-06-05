@@ -12,6 +12,8 @@ public final class ServerInfo{
         this.startTime = startTime;
     }
     public long upTime(){
+        //todo (emily): Why not format it to seconds here?
+        // It'll also help to call it upTimeInSec or upTimeInMS
         return Time.now().inMs()-(startTime).inMs();
     }
 }

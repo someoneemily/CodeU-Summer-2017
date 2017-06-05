@@ -128,6 +128,8 @@ public final class Chat {
           System.out.format("ERROR: Failed to retrieve Up Time of server.");
         } else {
           System.out.println("Server up at: " + info.startTime + "\nRunning Duration: " + info.upTime()/1000 + " seconds");
+          //todo (emily): I would split this to two lines for the sake of readability
+          //also, see my comment in ServerInfo.java
         }
       }
     });

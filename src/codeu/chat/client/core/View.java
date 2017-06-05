@@ -137,7 +137,7 @@ final class View implements BasicView {
 
     return messages;
   }
-
+  //todo(emily): Add comments to this, explaining the logic. Notice that in the code provided, there were comments..
   public ServerInfo getInfo() {
     try (final Connection connection = source.connect()) {
       Serializers.INTEGER.write(connection.out(), NetworkCode.SERVER_INFO_REQUEST);
@@ -152,6 +152,6 @@ final class View implements BasicView {
       LOG.error(ex, "Exception during call on server.");
     }
     return null;
-  }
+  } //todo(emily): Readability speaking - Please add some spacing in the method, it's too dense.  
 
 }
