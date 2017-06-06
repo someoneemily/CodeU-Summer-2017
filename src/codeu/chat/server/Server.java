@@ -43,10 +43,11 @@ import codeu.chat.util.connections.Connection;
 
 public final class Server {
 
+  private static final ServerInfo info = new ServerInfo();
+
   private interface Command {
     void onMessage(InputStream in, OutputStream out) throws IOException;
   }
-  private static final ServerInfo info = new ServerInfo();
 
   private static final Logger.Log LOG = Logger.newLog(Server.class);
 
@@ -72,6 +73,16 @@ public final class Server {
     this.secret = secret;
     this.controller = new Controller(id, model);
     this.relay = relay;
+
+    //Info - A client wants information about the server - uptime and version
+    this.commands.put(NetworkCode.SERVER_INFO_REQUEST, new Command(){
+    	public void onMessage(InputStream in, OutputStream out) throws IOException {
+    		Serializers.INTEGER.write(out, NetworkCode.SERVER_INFO_RESPONSE);
+    		Uuid.SERIALIZER.write(out, info.version);
+    		Time.SERIALIZER.write(out, info.startTime);
+        }
+    });
+
 
     // New Message - A client wants to add a new message to the back end.
     this.commands.put(NetworkCode.NEW_MESSAGE_REQUEST, new Command() {
@@ -171,16 +182,6 @@ public final class Server {
 
         Serializers.INTEGER.write(out, NetworkCode.GET_MESSAGES_BY_ID_RESPONSE);
         Serializers.collection(Message.SERIALIZER).write(out, messages);
-      }
-    });
-
-    // Get Up Time of Server - length server has been running
-    this.commands.put(NetworkCode.SERVER_INFO_REQUEST, new Command() {
-      @Override
-      public void onMessage(InputStream in, OutputStream out) throws IOException {
-
-        Serializers.INTEGER.write(out, NetworkCode.SERVER_INFO_RESPONSE);
-        Time.SERIALIZER.write(out, info.startTime);
       }
     });
 
