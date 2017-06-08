@@ -137,22 +137,34 @@ final class View implements BasicView {
 
     return messages;
   }
-  //todo(emily): Add comments to this, explaining the logic. Notice that in the code provided, there were comments..
+  // Connection is created between server and client and based on response Network Code, a startTime and Version can be used
+  // to instantiate a ServerInfo which contains the server startTime and version number
   public ServerInfo getInfo() {
+
     try (final Connection connection = source.connect()) {
+
       Serializers.INTEGER.write(connection.out(), NetworkCode.SERVER_INFO_REQUEST);
+
       if (Serializers.INTEGER.read(connection.in()) == NetworkCode.SERVER_INFO_RESPONSE) {
-        final Time startTime = Time.SERIALIZER.read(connection.in());
+
+
         final Uuid version = Uuid.SERIALIZER.read(connection.in());
-          return new ServerInfo(version, startTime);
+        final Time startTime = Time.SERIALIZER.read(connection.in());
+
+        return new ServerInfo(version, startTime);
+
       } else {
+
         LOG.error("Server did not respond with type of response expected");
+
       }
     } catch (Exception ex) {
+
       System.out.println("ERROR: Exception during connection call on server. Check log for details.");
       LOG.error(ex, "Exception during call on server.");
+
     }
     return null;
-  } //todo(emily): Readability speaking - Please add some spacing in the method, it's too dense.
+  }
 
 }
