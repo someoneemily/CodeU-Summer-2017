@@ -31,6 +31,7 @@ import codeu.chat.common.BasicView;
 import codeu.chat.common.ConversationHeader;
 import codeu.chat.common.ConversationPayload;
 import codeu.chat.common.Message;
+import codeu.chat.common.ServerInfo;
 import codeu.chat.common.SinglesView;
 import codeu.chat.common.User;
 import codeu.chat.util.Logger;
@@ -111,4 +112,14 @@ public final class View implements BasicView, SinglesView {
 
     return found;
   }
+
+
+@Override
+public ServerInfo getInfo() {
+	
+	return null;
+}
+
+
+
 }
