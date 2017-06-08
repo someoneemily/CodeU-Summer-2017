@@ -144,24 +144,18 @@ final class View implements BasicView {
     try (final Connection connection = source.connect()) {
 
       Serializers.INTEGER.write(connection.out(), NetworkCode.SERVER_INFO_REQUEST);
-
       if (Serializers.INTEGER.read(connection.in()) == NetworkCode.SERVER_INFO_RESPONSE) {
+    	  final Uuid version = Uuid.SERIALIZER.read(connection.in());
+    	  final Time startTime = Time.SERIALIZER.read(connection.in());
 
-        final Uuid version = Uuid.SERIALIZER.read(connection.in());
-        final Time startTime = Time.SERIALIZER.read(connection.in());
-
-        return new ServerInfo(version, startTime);
-
+          return new ServerInfo(version, startTime);
       } else {
-
         LOG.error("Server did not respond with type of response expected");
-
       }
     } catch (Exception ex) {
 
       System.out.println("ERROR: Exception during connection call on server. Check log for details.");
       LOG.error(ex, "Exception during call on server.");
-
     }
     return null;
   }

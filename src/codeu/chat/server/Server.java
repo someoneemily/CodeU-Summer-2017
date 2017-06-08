@@ -83,6 +83,7 @@ public final class Server {
         }
     });
 
+
     // New Message - A client wants to add a new message to the back end.
     this.commands.put(NetworkCode.NEW_MESSAGE_REQUEST, new Command() {
       @Override
