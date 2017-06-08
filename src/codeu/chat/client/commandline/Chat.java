@@ -127,10 +127,9 @@ public final class Chat {
         if (info == null) {
           System.out.format("ERROR: Server not responsive");
         } else {
-          System.out.println("Server up at: " + info.startTime + "\nRunning Duration: " + info.upTime()/1000 + " seconds");
+          System.out.println("Server up at: " + info.startTime);
+          System.out.println("Running Duration: " + info.upTimeInSec() + " seconds");
           System.out.println("Server version:" + info.version);
-          //todo (emily): I would split this to two lines for the sake of readability
-          //also, see my comment in ServerInfo.java
         }
       }
     });
