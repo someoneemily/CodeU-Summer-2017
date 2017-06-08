@@ -147,7 +147,6 @@ final class View implements BasicView {
 
       if (Serializers.INTEGER.read(connection.in()) == NetworkCode.SERVER_INFO_RESPONSE) {
 
-
         final Uuid version = Uuid.SERIALIZER.read(connection.in());
         final Time startTime = Time.SERIALIZER.read(connection.in());
 
