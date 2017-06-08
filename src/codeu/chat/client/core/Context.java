@@ -43,7 +43,8 @@ public final class Context {
   }
 
   public ServerInfo getInfo(){
-    return ((View)view).getInfo();
+    
+	return view.getInfo();
     //todo (emily): Why are you using casting here? If you can't access view.getInfo(), solve the problem :)
   }
 

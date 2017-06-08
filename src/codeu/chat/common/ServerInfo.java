@@ -11,7 +11,6 @@ public final class ServerInfo{
 	public final Uuid version;
 
 	public ServerInfo(){
-        this.startTime = Time.now();
 		Uuid parsed;
 		try {
 			parsed = Uuid.parse(SERVER_VERSION);
@@ -21,13 +20,18 @@ public final class ServerInfo{
 			parsed = null;
 		}
 		this.version = parsed;
+        this.startTime = Time.now();
+		
 	}
+	
+	/*
     public ServerInfo(Time startTime){
         this.startTime = startTime;
     }
 	public ServerInfo(Uuid version){
 		this.version = version;
 	}
+	*/
 	public ServerInfo(Uuid version, Time startTime){
 		this.version = version;
 		this.startTime = startTime;
