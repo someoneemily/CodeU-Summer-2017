@@ -33,7 +33,7 @@ public final class Time implements Comparable<Time> {
 
     @Override
     public Time read(InputStream in) throws IOException {
-      
+
       return Time.fromMs(Serializers.LONG.read(in));
 
     }
