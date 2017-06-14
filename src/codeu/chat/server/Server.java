@@ -23,7 +23,9 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 import codeu.chat.common.ConversationHeader;
 import codeu.chat.common.ConversationPayload;
@@ -44,6 +46,8 @@ import codeu.chat.util.connections.Connection;
 public final class Server {
 
   private static final ServerInfo info = new ServerInfo();
+  
+  private Queue<String> persistentLog = new LinkedList<String>();
 
   private interface Command {
     void onMessage(InputStream in, OutputStream out) throws IOException;
@@ -112,6 +116,15 @@ public final class Server {
 
         final String name = Serializers.STRING.read(in);
         final User user = controller.newUser(name);
+        
+        String userAddCommand = "U-ADD ";
+        userAddCommand += user.id + " ";
+        userAddCommand += user.name + " ";
+        userAddCommand += user.creation;
+
+        persistentLog.add(userAddCommand);
+        System.out.println(userAddCommand);
+        
 
         Serializers.INTEGER.write(out, NetworkCode.NEW_USER_RESPONSE);
         Serializers.nullable(User.SERIALIZER).write(out, user);
@@ -209,6 +222,8 @@ public final class Server {
   }
 
   public User newUser(InputStream in){
+	  
+	  
 	  User addUser = null;
 	  try {
 		addUser = User.SERIALIZER.read(in);
