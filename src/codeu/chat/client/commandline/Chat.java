@@ -19,11 +19,13 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Stack;
 
+
 import codeu.chat.client.core.Context;
 import codeu.chat.client.core.ConversationContext;
 import codeu.chat.client.core.MessageContext;
 import codeu.chat.client.core.UserContext;
 import codeu.chat.common.ServerInfo;
+import codeu.chat.common.User;
 
 public final class Chat {
 
@@ -157,18 +159,18 @@ public final class Chat {
     // "u-add" while on the root panel.
     //
     panel.register("u-add", new Panel.Command() {
-      @Override
-      public void invoke(Scanner args) {
-        final String name = args.hasNext() ? args.nextLine().trim() : "";
-        if (name.length() > 0) {
-          if (context.create(name) == null) {
-            System.out.println("ERROR: Failed to create new user");
+        @Override
+        public void invoke(Scanner args) {
+          final String name = args.hasNext() ? args.nextLine().trim() : "";
+          if (name.length() > 0) {
+            if (context.create(name) == null) {
+              System.out.println("ERROR: Failed to create new user");
+            }
+          } else {
+            System.out.println("ERROR: Missing <username>");
           }
-        } else {
-          System.out.println("ERROR: Missing <username>");
         }
-      }
-    });
+      });
 
     // U-SIGN-IN (sign in user)
     //

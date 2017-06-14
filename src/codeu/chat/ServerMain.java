@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -44,7 +45,6 @@ final class ServerMain {
 
   private static final Logger.Log LOG = Logger.newLog(ServerMain.class);
   public static File persistentPath = null;
-  public Queue<String> persistentLog = new LinkedList<String>();
 
   public static void main(String[] args) {
 
@@ -123,41 +123,25 @@ final class ServerMain {
     try {
 		if(!persistentFile.createNewFile()){
 			//create the necessary users, conversations and messages
-			BufferedReader reader = new BufferedReader(new FileReader(persistentFile));
-			
-			//reads in each command
-			String command = reader.readLine();
-			
-			//split on space
-			String[] splitStr = command.split("\\s+");
-			
-			switch(splitStr[0]){
-				case "U-ADD":
+			Scanner sc = new Scanner(new File(persistentPath + "//persistentLog.txt"));
+			while(sc.hasNextLine()){
+				String command = sc.nextLine();
+				String[] splitStr = command.split("\\s+");
+				
+				switch(splitStr[0]){
+					case "U-ADD":
+						server.newUser(splitStr[1], splitStr[2], splitStr[3]);
+						break;
+				}
+				
+			}
 					
-					
-					
-					//put in method in controller
-					StringBuilder sb = new StringBuilder();
-				    splitStr = Arrays.copyOfRange(splitStr, 1, splitStr.length);
-				    
-				    for(String s : splitStr){
-				    	sb.append(s);
-				    }
-				    
-					InputStream in = new ByteArrayInputStream( sb.toString().getBytes() );
-					
-
-						
-					server.newUser(in);
-									
-					
-					break;
 			
 			
 			}
 			
 			
-		}
+		
 	} catch (IOException e) {
 		
 		e.printStackTrace();

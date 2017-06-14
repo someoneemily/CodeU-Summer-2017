@@ -39,6 +39,8 @@ public final class User {
     @Override
     public User read(InputStream in) throws IOException {
 
+    	
+    	
       return new User(
           Uuid.SERIALIZER.read(in),
           Serializers.STRING.read(in),

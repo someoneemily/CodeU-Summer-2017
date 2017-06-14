@@ -33,14 +33,14 @@ public final class Time implements Comparable<Time> {
 
     @Override
     public Time read(InputStream in) throws IOException {
-
+      
       return Time.fromMs(Serializers.LONG.read(in));
 
     }
   };
 
   private static final SimpleDateFormat formatter =
-      new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss.SSS");
+      new SimpleDateFormat("HH:mm:ss.SSS");
 
   private final Date date;
 

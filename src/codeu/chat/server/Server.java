@@ -118,9 +118,9 @@ public final class Server {
         final User user = controller.newUser(name);
         
         String userAddCommand = "U-ADD ";
-        userAddCommand += user.id + " ";
+        userAddCommand += user.id.id() + " ";
         userAddCommand += user.name + " ";
-        userAddCommand += user.creation;
+        userAddCommand += user.creation.inMs();
 
         persistentLog.add(userAddCommand);
         System.out.println(userAddCommand);
@@ -221,23 +221,24 @@ public final class Server {
     });
   }
 
-  public User newUser(InputStream in){
+  public User newUser(String id, String name, String time){
 	  
 	  
-	  User addUser = null;
-	  try {
-		addUser = User.SERIALIZER.read(in);
-	  } catch (IOException e) {
-		
-		e.printStackTrace();
-	  }
+	  Uuid userid = new Uuid(Integer.parseInt(id));
+	  
+	  Time usercreation = Time.fromMs(Long.parseLong(time));
+	  
+	  
+	  
+	  User addUser = new User(userid, name, usercreation);
 	  
 	  this.model.add(addUser);
 	  
 	  return addUser;
   }
   
-  public void handleConnection(final Connection connection) {
+
+public void handleConnection(final Connection connection) {
     timeline.scheduleNow(new Runnable() {
       @Override
       public void run() {
