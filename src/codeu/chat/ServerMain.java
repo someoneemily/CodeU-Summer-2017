@@ -16,15 +16,24 @@
 package codeu.chat;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileReader;
 
 import codeu.chat.common.Relay;
 import codeu.chat.common.Secret;
+import codeu.chat.common.User;
 import codeu.chat.server.NoOpRelay;
 import codeu.chat.server.RemoteRelay;
 import codeu.chat.server.Server;
 import codeu.chat.util.Logger;
 import codeu.chat.util.RemoteAddress;
+import codeu.chat.util.Time;
 import codeu.chat.util.Uuid;
 import codeu.chat.util.connections.ClientConnectionSource;
 import codeu.chat.util.connections.Connection;
@@ -34,6 +43,8 @@ import codeu.chat.util.connections.ServerConnectionSource;
 final class ServerMain {
 
   private static final Logger.Log LOG = Logger.newLog(ServerMain.class);
+  public static File persistentPath = null;
+  public Queue<String> persistentLog = new LinkedList<String>();
 
   public static void main(String[] args) {
 
@@ -50,11 +61,12 @@ final class ServerMain {
     Uuid id = null;
     Secret secret = null;
     int port = -1;
-    // This is the directory where it is safe to store data accross runs
+    // This is the directory where it is safe to store data across runs
     // of the server.
-    File persistentPath = null;
+    
     RemoteAddress relayAddress = null;
-
+    
+    
     try {
       id = Uuid.parse(args[0]);
       secret = Secret.parse(args[1]);
@@ -66,10 +78,16 @@ final class ServerMain {
       System.exit(1);
     }
 
+    
     if (!persistentPath.isDirectory()) {
       LOG.error("%s does not exist", persistentPath);
+          
       System.exit(1);
     }
+    
+    
+      
+   
 
     try (
         final ConnectionSource serverSource = ServerConnectionSource.forPort(port);
@@ -98,7 +116,64 @@ final class ServerMain {
     final Server server = new Server(id, secret, relay);
 
     LOG.info("Created server.");
+    
+    //in the persistentPath, the persistentLog will be stored as
+    //persistentLog.txt
+    File persistentFile = new File(persistentPath + "//persistentLog.txt");
+    try {
+		if(!persistentFile.createNewFile()){
+			//create the necessary users, conversations and messages
+			BufferedReader reader = new BufferedReader(new FileReader(persistentFile));
+			
+			//reads in each command
+			String command = reader.readLine();
+			
+			//split on space
+			String[] splitStr = command.split("\\s+");
+			
+			switch(splitStr[0]){
+				case "U-ADD":
+					
+					
+					
+					//put in method in controller
+					StringBuilder sb = new StringBuilder();
+				    splitStr = Arrays.copyOfRange(splitStr, 1, splitStr.length);
+				    
+				    for(String s : splitStr){
+				    	sb.append(s);
+				    }
+				    
+					InputStream in = new ByteArrayInputStream( sb.toString().getBytes() );
+					
 
+						
+					server.newUser(in);
+									
+					
+					break;
+			
+			
+			}
+			
+			
+		}
+	} catch (IOException e) {
+		
+		e.printStackTrace();
+	}  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     while (true) {
 
       try {

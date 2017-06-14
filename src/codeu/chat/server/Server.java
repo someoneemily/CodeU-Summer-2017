@@ -208,6 +208,20 @@ public final class Server {
     });
   }
 
+  public User newUser(InputStream in){
+	  User addUser = null;
+	  try {
+		addUser = User.SERIALIZER.read(in);
+	  } catch (IOException e) {
+		
+		e.printStackTrace();
+	  }
+	  
+	  this.model.add(addUser);
+	  
+	  return addUser;
+  }
+  
   public void handleConnection(final Connection connection) {
     timeline.scheduleNow(new Runnable() {
       @Override
