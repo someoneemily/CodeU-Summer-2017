@@ -22,8 +22,8 @@ import codeu.chat.common.ConversationHeader;
 import codeu.chat.common.ConversationPayload;
 import codeu.chat.common.Message;
 import codeu.chat.common.NetworkCode;
-import codeu.chat.common.User;
 import codeu.chat.common.ServerInfo;
+import codeu.chat.common.User;
 import codeu.chat.util.Logger;
 import codeu.chat.util.Serializers;
 import codeu.chat.util.Time;
@@ -137,17 +137,23 @@ final class View implements BasicView {
 
     return messages;
   }
-
+  // Connection is created between server and client and based on response Network Code, a startTime and Version can be used
+  // to instantiate a ServerInfo which contains the server startTime and version number
   public ServerInfo getInfo() {
+
     try (final Connection connection = source.connect()) {
+
       Serializers.INTEGER.write(connection.out(), NetworkCode.SERVER_INFO_REQUEST);
       if (Serializers.INTEGER.read(connection.in()) == NetworkCode.SERVER_INFO_RESPONSE) {
-        final Time startTime = Time.SERIALIZER.read(connection.in());
-        return new ServerInfo(startTime);
+    	  final Uuid version = Uuid.SERIALIZER.read(connection.in());
+    	  final Time startTime = Time.SERIALIZER.read(connection.in());
+
+          return new ServerInfo(version, startTime);
       } else {
         LOG.error("Server did not respond with type of response expected");
       }
     } catch (Exception ex) {
+
       System.out.println("ERROR: Exception during connection call on server. Check log for details.");
       LOG.error(ex, "Exception during call on server.");
     }

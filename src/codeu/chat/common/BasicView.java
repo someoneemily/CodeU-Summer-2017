@@ -52,4 +52,9 @@ public interface BasicView {
   //   Return all messages whose id is found in the given collection.
   Collection<Message> getMessages(Collection<Uuid> ids);
 
+  // Get ServerInfo
+  //
+  // returns ServerInfo with the correct startTime and version instantiated
+  ServerInfo getInfo();
+  
 }

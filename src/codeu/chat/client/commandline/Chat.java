@@ -111,14 +111,14 @@ public final class Chat {
       @Override
       public void invoke(List<String> args) {
         System.out.println("ROOT MODE");
+        System.out.println("  info");
+        System.out.println("    Prints out the version of the server & how long the server has been running");
         System.out.println("  u-list");
         System.out.println("    List all users.");
         System.out.println("  u-add <name>");
         System.out.println("    Add a new user with the given name.");
         System.out.println("  u-sign-in <name>");
         System.out.println("    Sign in as the user with the given name.");
-        System.out.println("  info");
-        System.out.println("    Retrieve how long the server has been running.");
         System.out.println("  exit");
         System.out.println("    Exit the program.");
       }
@@ -143,13 +143,14 @@ public final class Chat {
       public void invoke(List<String> args) {
         final ServerInfo info = context.getInfo();
         if (info == null) {
-          System.out.format("ERROR: Failed to retrieve Up Time of server.");
+          System.out.format("ERROR: Server not responsive");
         } else {
-          System.out.println("Server up at: " + info.startTime + "\nRunning Duration: " + info.upTime()/1000 + " seconds");
+          System.out.println("Server up at: " + info.startTime);
+          System.out.println("Running Duration: " + info.upTimeInSec() + " seconds");
+          System.out.println("Server version:" + info.version);
         }
       }
     });
-
     // U-LIST (user list)
     //
     // Add a command to print all users registered on the server when the user
