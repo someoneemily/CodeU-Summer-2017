@@ -123,6 +123,9 @@ public final class Chat {
         System.out.println("    Exit the program.");
       }
 
+
+//todo(Weizhen): Some cleanup is needed here - a few of these commented out things appear throughout the file.
+
 //	@Override
 //	public void invoke(Scanner args) {
 //		// TODO Auto-generated method stub
