@@ -15,9 +15,12 @@
 
 package codeu.chat.server;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
@@ -47,12 +50,18 @@ public final class Server {
 
   private static final ServerInfo info = new ServerInfo();
   
-  private Queue<String> persistentLog = new LinkedList<String>();
+  //queue where persistent log will be stored
+  private LinkedList<String> persistentLog = new LinkedList<String>();
+  //file where persistent log will be written to every five seconds
+  private String persistentFile;
+  
+  private PrintWriter persistentDataWriter = null;
 
   private interface Command {
     void onMessage(InputStream in, OutputStream out) throws IOException;
   }
 
+  
   private static final Logger.Log LOG = Logger.newLog(Server.class);
 
   private static final int RELAY_REFRESH_MS = 5000;  // 5 seconds
@@ -71,12 +80,15 @@ public final class Server {
   private final Relay relay;
   private Uuid lastSeen = Uuid.NULL;
 
-  public Server(final Uuid id, final Secret secret, final Relay relay) {
+  public Server(final Uuid id, final Secret secret, final Relay relay, final String persistentFile) {
 
     this.id = id;
     this.secret = secret;
     this.controller = new Controller(id, model);
     this.relay = relay;
+    
+    //store persistent file
+    this.persistentFile = persistentFile;
 
     //Info - A client wants information about the server - uptime and version
     this.commands.put(NetworkCode.SERVER_INFO_REQUEST, new Command(){
@@ -117,13 +129,24 @@ public final class Server {
         final String name = Serializers.STRING.read(in);
         final User user = controller.newUser(name);
         
-        String userAddCommand = "U-ADD ";
-        userAddCommand += user.id.id() + " ";
-        userAddCommand += user.name + " ";
-        userAddCommand += user.creation.inMs();
+        //if a user can be created
+        //then we will add the command to the queue
+        if(user != null){
+        	String userAddCommand = "U-ADD ";
+            userAddCommand += user.id.id() + " ";
+            userAddCommand += user.name + " ";
+            userAddCommand += user.creation.inMs();
 
-        persistentLog.add(userAddCommand);
-        System.out.println(userAddCommand);
+            //u-add UUID String Time
+            persistentLog.add(userAddCommand);
+            
+        }
+        else{
+        	
+        	LOG.info("unable to create user " + name);
+        }
+        
+        
         
 
         Serializers.INTEGER.write(out, NetworkCode.NEW_USER_RESPONSE);
@@ -209,6 +232,22 @@ public final class Server {
             onBundle(bundle);
             lastSeen = bundle.id();
           }
+          
+          try{
+        	  persistentDataWriter = new PrintWriter(new FileWriter(persistentFile, true));
+          
+        	  while(!persistentLog.isEmpty()){
+        		  persistentDataWriter.println(persistentLog.pop());
+        	  }
+          }  
+          catch(Exception e){
+        	  LOG.error(e, "Unable to read from file");
+          }
+          finally{
+        	  persistentDataWriter.close();
+          }
+          
+          
 
         } catch (Exception ex) {
 
@@ -221,20 +260,15 @@ public final class Server {
     });
   }
 
-  public User newUser(String id, String name, String time){
+  //adds new user at the start
+  public void addNewUser(String id, String name, String time){
 	  
-	  
-	  Uuid userid = new Uuid(Integer.parseInt(id));
-	  
+	  //converts strings to necessary objects
+	  Uuid userid = new Uuid(Integer.parseInt(id));	  
 	  Time usercreation = Time.fromMs(Long.parseLong(time));
 	  
+	  this.controller.newUser(userid, name, usercreation);
 	  
-	  
-	  User addUser = new User(userid, name, usercreation);
-	  
-	  this.model.add(addUser);
-	  
-	  return addUser;
   }
   
 

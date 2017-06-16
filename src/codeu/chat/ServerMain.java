@@ -43,8 +43,12 @@ import codeu.chat.util.connections.ServerConnectionSource;
 
 final class ServerMain {
 
+	
   private static final Logger.Log LOG = Logger.newLog(ServerMain.class);
-  public static File persistentPath = null;
+  
+//This is the directory where it is safe to store data across runs
+  // of the server.
+  private static File persistentPath = null;
 
   public static void main(String[] args) {
 
@@ -61,8 +65,7 @@ final class ServerMain {
     Uuid id = null;
     Secret secret = null;
     int port = -1;
-    // This is the directory where it is safe to store data across runs
-    // of the server.
+    
     
     RemoteAddress relayAddress = null;
     
@@ -113,24 +116,39 @@ final class ServerMain {
                         new NoOpRelay() :
                         new RemoteRelay(relaySource);
 
-    final Server server = new Server(id, secret, relay);
+    //name of persistentLog file              
+    String persistentFileName = persistentPath + "//persistentLog.txt";
+    
+    final Server server = new Server(id, secret, relay, persistentFileName);
 
     LOG.info("Created server.");
     
-    //in the persistentPath, the persistentLog will be stored as
-    //persistentLog.txt
-    File persistentFile = new File(persistentPath + "//persistentLog.txt");
+    
+    
+    //location where persistentLog will be written to
+    File persistentFile = new File(persistentFileName);
     try {
 		if(!persistentFile.createNewFile()){
 			//create the necessary users, conversations and messages
-			Scanner sc = new Scanner(new File(persistentPath + "//persistentLog.txt"));
+			
+			//reads in the current persistent log from the file
+			Scanner sc = new Scanner(new File(persistentFileName));
 			while(sc.hasNextLine()){
+				
+				//collects the first command
 				String command = sc.nextLine();
+				
+				//splits on string so the command can be interpreted
 				String[] splitStr = command.split("\\s+");
 				
+				
+				//checks what the first word of the command is
 				switch(splitStr[0]){
+				
+					//user should be added
 					case "U-ADD":
-						server.newUser(splitStr[1], splitStr[2], splitStr[3]);
+						
+						server.addNewUser(splitStr[1], splitStr[2], splitStr[3]);
 						break;
 				}
 				
