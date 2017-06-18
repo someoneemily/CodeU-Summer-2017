@@ -122,17 +122,8 @@ public final class Chat {
         System.out.println("  exit");
         System.out.println("    Exit the program.");
       }
-
-
-//todo(Weizhen): Some cleanup is needed here - a few of these commented out things appear throughout the file.
-
-//	@Override
-//	public void invoke(Scanner args) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-    });
-
+    }); 
+    
     // info
     //
     //Add a command to return the amount of time the server has been running
@@ -151,6 +142,7 @@ public final class Chat {
         }
       }
     });
+    
     // U-LIST (user list)
     //
     // Add a command to print all users registered on the server when the user
@@ -166,12 +158,6 @@ public final class Chat {
               user.user.id);
         }
       }
-
-//	@Override
-//	public void invoke(Scanner args) {
-//		// TODO Auto-generated method stub
-//		
-//	}
     });
 
     // U-ADD (add user)
@@ -192,12 +178,6 @@ public final class Chat {
           System.out.println("ERROR: Missing <username>");
         }
       }
-
-//	@Override
-//	public void invoke(Scanner args) {
-//		// TODO Auto-generated method stub
-//		
-//	}
     });
 
     // U-SIGN-IN (sign in user)
@@ -231,11 +211,6 @@ public final class Chat {
         }
         return null;
       }
-//	@Override
-//	public void invoke(Scanner args) {
-//		// TODO Auto-generated method stub
-//		
-//	}
     });
 
     // Now that the panel has all its commands registered, return the panel
@@ -269,12 +244,6 @@ public final class Chat {
         System.out.println("  exit");
         System.out.println("    Exit the program.");
       }
-
-//	@Override
-//	public void invoke(Scanner args) {
-//		// TODO Auto-generated method stub
-//		
-//	}
     });
 
     // C-LIST (list conversations)
@@ -292,12 +261,6 @@ public final class Chat {
               conversation.conversation.id);
         }
       }
-
-//	@Override
-//	public void invoke(Scanner args) {
-//		// TODO Auto-generated method stub
-//		
-//	}
     });
 
     // C-ADD (add conversation)
@@ -320,12 +283,6 @@ public final class Chat {
           System.out.println("ERROR: Missing <title>");
         }
       }
-
-//	@Override
-//	public void invoke(Scanner args) {
-//		// TODO Auto-generated method stub
-//		
-//	}
     });
 
     // C-JOIN (join conversation)
@@ -360,12 +317,6 @@ public final class Chat {
         }
         return null;
       }
-
-//	@Override
-//	public void invoke(Scanner args) {
-//		// TODO Auto-generated method stub
-//		
-//	}
     });
 
     // INFO
@@ -380,12 +331,6 @@ public final class Chat {
         System.out.format("  Name : %s\n", user.user.name);
         System.out.format("  Id   : UUID:%s\n", user.user.id);
       }
-
-//	@Override
-//	public void invoke(Scanner args) {
-//		// TODO Auto-generated method stub
-//		
-//	}
     });
 
     // Now that the panel has all its commands registered, return the panel
@@ -417,12 +362,6 @@ public final class Chat {
         System.out.println("  exit");
         System.out.println("    Exit the program.");
       }
-//
-//	@Override
-//	public void invoke(Scanner args) {
-//		// TODO Auto-generated method stub
-//		
-//	}
     });
 
     // M-LIST (list messages)
@@ -446,12 +385,6 @@ public final class Chat {
         }
         System.out.println("---  end of conversation  ---");
       }
-
-//	@Override
-//	public void invoke(Scanner args) {
-//		// TODO Auto-generated method stub
-//		
-//	}
     });
 
     // M-ADD (add message)
@@ -470,12 +403,6 @@ public final class Chat {
           System.out.println("ERROR: Messages must contain text");
         }
       }
-
-//	@Override
-//	public void invoke(Scanner args) {
-//		// TODO Auto-generated method stub
-//		
-//	}
     });
 
     // INFO
@@ -491,12 +418,6 @@ public final class Chat {
         System.out.format("  Id    : UUID:%s\n", conversation.conversation.id);
         System.out.format("  Owner : %s\n", conversation.conversation.owner);
       }
-
-//	@Override
-//	public void invoke(Scanner args) {
-//		// TODO Auto-generated method stub
-//		
-//	}
     });
 
     // Now that the panel has all its commands registered, return the panel

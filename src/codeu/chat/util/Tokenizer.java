@@ -7,10 +7,17 @@ public final class Tokenizer {
 	private StringBuilder token;
 	private String source;
 	private int at;
-	//todo(Weizhen): What is this costructor doing?
+
 	public Tokenizer(String source) {
+		this.token = new StringBuilder();
+		this.source = source;
+		this.at = 0;
 	}
-	//todo(Weizhen): please a comment describing the method's purpose
+		
+	// NEXT
+    //
+    // Retrieves next string to read as a token.
+    //
 	public String next() throws IOException {
 		// skip leading whitespaces
 		while (remaining() > 0 && Character.isWhitespace(peek())) {
@@ -20,34 +27,48 @@ public final class Tokenizer {
 		if (remaining() <= 0) {
 			return null;
 		} else if (peek() == '"') {
-			readWithQuotes(); // read a token surrounded by quotes
+			return readWithQuotes(); // read a token surrounded by quotes
 		} else {
-			readWithNoQuotes(); // read a token not surrounded by quotes
+			return readWithNoQuotes(); // read a token not surrounded by quotes
 		}
-		
-		return null;
-		
 	}
-	//todo(Weizhen): please a comment describing the method's purpose
+	
+	// REMAINING
+    //
+    // Returns remaining number of characters in source string
+    // that have not been read yet while parsing tokens.
+	//
 	private int remaining() {
 		return source.length() - at;
 	}
-	//todo(Weizhen): please a comment describing the method's purpose
+	
+	// PEEK
+    //
+    // Return character at current position in source string.
+    //
 	private char peek() throws IOException {
 		if (at < source.length()) {
 			return source.charAt(at);
 		} else {
-			throw new IOException();
-			//todo(Weizhen): Please add content to the exeption
+			throw new IndexOutOfBoundsException("This is outside of the source string.");
 		}
-	}
-	//todo(Weizhen): please a comment describing the method's purpose
+	}	
+	
+	// READ
+    //
+    // Read the character at current position in source string
+    // and advance to the next position.
+	//
 	private char read() throws IOException {
 		final char c = peek();
 		at += 1;
 		return c;
-	}
-	//todo(Weizhen): please a comment describing the method's purpose
+	}	
+	
+	// READWITHNOQUOTES
+    //
+    // Read source string without quotation marks as token.
+    //
 	private String readWithNoQuotes() throws IOException {
 		token.setLength(0); // clear the token
 		while (remaining() > 0 && !Character.isWhitespace(peek())) {
@@ -55,14 +76,19 @@ public final class Tokenizer {
 		}
 		return token.toString();
 	}
-	//todo(Weizhen): please a comment describing the method's purpose
-
+	
+	// READWITHQUOTES
+    //
+    // Read source string with quotation marks as token.
+    //
 	private String readWithQuotes() throws IOException {
 		token.setLength(0); // clear the token
 		if (read() != '"') {
+			throw new IOException("Strings must start with opening quotes!");
+		}
+		while(peek() != '"') {
 			token.append(read());
 		}
-		//todo(Weizhen): Some things are missing here - please look at the bottom of page 9
 		read(); // read closing quote that allows us to exit the loop
 		return token.toString();
 	}
