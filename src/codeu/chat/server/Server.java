@@ -133,7 +133,7 @@ public final class Server {
         //then we will add the command to the queue
         if(user != null){
         	String userAddCommand = "U-ADD ";
-            userAddCommand += user.id.id() + " ";
+            userAddCommand += user.id.toString() + " ";
             userAddCommand += user.name + " ";
             userAddCommand += user.creation.inMs();
 
@@ -264,10 +264,17 @@ public final class Server {
   public void addNewUser(String id, String name, String time){
 	  
 	  //converts strings to necessary objects
-	  Uuid userid = new Uuid(Integer.parseInt(id));	  
-	  Time usercreation = Time.fromMs(Long.parseLong(time));
+	  Uuid userid;
+	try {
+		userid = Uuid.parse(id);
+		Time usercreation = Time.fromMs(Long.parseLong(time));
+		  
+		this.controller.newUser(userid, name, usercreation);
+	} catch (IOException e) {
+		LOG.info("Could not read in users from persistent log");
+		e.printStackTrace();
+	}	  
 	  
-	  this.controller.newUser(userid, name, usercreation);
 	  
   }
   
