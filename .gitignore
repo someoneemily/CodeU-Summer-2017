@@ -17,5 +17,10 @@ src/codeu/chat/util/Serializers.class
 src/codeu/chat/util/Time$1.class
 src/codeu/chat/util/Time.class
 CodeU-Summer-2017.iml
+data/
+out/
+settings/
+.classpath
+.project
 chat_client_log.log.lck
 chat_server_log.log.lck
