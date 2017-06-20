@@ -56,5 +56,4 @@ public interface BasicView {
   //
   // returns ServerInfo with the correct startTime and version instantiated
   ServerInfo getInfo();
-  
 }
