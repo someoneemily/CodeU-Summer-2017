@@ -40,7 +40,7 @@ public final class Time implements Comparable<Time> {
   };
 
   private static final SimpleDateFormat formatter =
-      new SimpleDateFormat("HH:mm:ss");
+      new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss.SSS");
 
   private final Date date;
 
