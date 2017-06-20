@@ -26,7 +26,11 @@ public final class ServerInfo{
 		this.version = version;
 		this.startTime = startTime;
 	}
-    public long upTimeInSec(){
-		return (Time.now().inMs()-(startTime).inMs())/1000;
+    public String upTime(){
+		long seconds = (Time.now().inMs()-(startTime).inMs())/1000;
+		long hours = seconds/3600;
+		long min = seconds%3600/60;
+		long sec = seconds%3600%60;
+		return String.format("%02d:%02d:%02d", hours, min, sec);
     }
 }

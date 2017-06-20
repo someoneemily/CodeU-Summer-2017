@@ -124,43 +124,42 @@ public final class Chat {
 				System.out.println("  exit");
 				System.out.println("    Exit the program.");
 			}
-		}); 
-
-		// info
-		//
-		//Add a command to return the amount of time the server has been running
-		//when the user enters "info" while on the root panel.
-		//
-		panel.register("info", new Panel.Command() {
-			@Override
-			public void invoke(List<String> args) {
-				final ServerInfo info = context.getInfo();
-				if (info == null) {
-					System.out.format("ERROR: Server not responsive");
-				} else {
-					System.out.println("Server up at: " + info.startTime);
-					System.out.println("Running Duration: " + info.upTimeInSec() + " seconds");
-					System.out.println("Server version:" + info.version);
-				}
-			}
 		});
 
-		// U-LIST (user list)
-		//
-		// Add a command to print all users registered on the server when the user
-		// enters "u-list" while on the root panel.
-		//
-		panel.register("u-list", new Panel.Command() {
-			@Override
-			public void invoke(List<String> args) {
-				for (final UserContext user : context.allUsers()) {
-					System.out.format(
-							"USER %s (UUID:%s)\n",
-							user.user.name,
-							user.user.id);
-				}
-			}
-		});
+    // info
+    //
+    //Add a command to return the amount of time the server has been running
+    //when the user enters "info" while on the root panel.
+    //
+    panel.register("info", new Panel.Command() {
+      @Override
+      public void invoke(Scanner args) {
+        final ServerInfo info = context.getInfo();
+        if (info == null) {
+          System.out.format("ERROR: Server not responsive");
+        } else {
+          System.out.println("Server up at: " + info.startTime);
+          System.out.println("Running Duration: " + info.upTime());
+          System.out.println("Server version: " + info.version);
+        }
+      }
+    });
+    // U-LIST (user list)
+    //
+    // Add a command to print all users registered on the server when the user
+    // enters "u-list" while on the root panel.
+    //
+    panel.register("u-list", new Panel.Command() {
+      @Override
+      public void invoke(Scanner args) {
+        for (final UserContext user : context.allUsers()) {
+          System.out.format(
+              "USER %s (UUID:%s)\n",
+              user.user.name,
+              user.user.id);
+        }
+      }
+    });
 
 		// U-ADD (add user)
 		//
