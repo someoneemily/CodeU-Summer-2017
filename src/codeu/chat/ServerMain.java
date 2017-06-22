@@ -33,6 +33,7 @@ import codeu.chat.server.NoOpRelay;
 import codeu.chat.server.RemoteRelay;
 import codeu.chat.server.Server;
 import codeu.chat.util.Logger;
+import codeu.chat.util.PersistentLog;
 import codeu.chat.util.RemoteAddress;
 import codeu.chat.util.Time;
 import codeu.chat.util.Uuid;
@@ -49,6 +50,7 @@ final class ServerMain {
 //This is the directory where it is safe to store data across runs
   // of the server.
   private static File persistentPath = null;
+  private static int port = -1;
 
   public static void main(String[] args) {
 
@@ -64,7 +66,7 @@ final class ServerMain {
 
     Uuid id = null;
     Secret secret = null;
-    int port = -1;
+    
     
     
     RemoteAddress relayAddress = null;
@@ -116,8 +118,8 @@ final class ServerMain {
                         new NoOpRelay() :
                         new RemoteRelay(relaySource);
 
-    //name of persistentLog file              
-    String persistentFileName = persistentPath + "//persistentLog.txt";
+    //name of persistentLog file   -- unique to port           
+    String persistentFileName = persistentPath + "//persistentLog" + port + ".txt";
     
     final Server server = new Server(id, secret, relay, persistentFileName);
 
@@ -126,51 +128,12 @@ final class ServerMain {
     
     
     //location where persistentLog will be written to
+    
+    
+    //reads in the file
     File persistentFile = new File(persistentFileName);
-    try {
-		if(!persistentFile.createNewFile()){
-			//create the necessary users, conversations and messages
-			
-			//reads in the current persistent log from the file
-			Scanner sc = new Scanner(new File(persistentFileName));
-			while(sc.hasNextLine()){
-				
-				//collects the first command
-				String command = sc.nextLine();
-				
-				//splits on string so the command can be interpreted
-				String[] splitStr = command.split("\\s+");
-				
-				
-				//checks what the first word of the command is
-				switch(splitStr[0]){
-				
-					//user should be added
-					case "U-ADD":
-						
-						server.addNewUser(splitStr[1], splitStr[2], splitStr[3]);
-						break;
-				}
-				
-			}
-					
-			
-			
-			}
-			
-			
-		
-	} catch (IOException e) {
-		
-		e.printStackTrace();
-	}  
-    
-    
-    
-    
-    
-    
-    
+    PersistentLog.read(persistentFile, server);
+      
     
     
     

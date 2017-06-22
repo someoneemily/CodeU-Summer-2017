@@ -40,6 +40,7 @@ import codeu.chat.common.Secret;
 import codeu.chat.common.ServerInfo;
 import codeu.chat.common.User;
 import codeu.chat.util.Logger;
+import codeu.chat.util.PersistentLog;
 import codeu.chat.util.Serializers;
 import codeu.chat.util.Time;
 import codeu.chat.util.Timeline;
@@ -50,12 +51,7 @@ public final class Server {
 
   private static final ServerInfo info = new ServerInfo();
   
-  //queue where persistent log will be stored
-  private LinkedList<String> persistentLog = new LinkedList<String>();
-  //file where persistent log will be written to every five seconds
-  private String persistentFile;
   
-  private PrintWriter persistentDataWriter = null;
 
   private interface Command {
     void onMessage(InputStream in, OutputStream out) throws IOException;
@@ -65,6 +61,8 @@ public final class Server {
   private static final Logger.Log LOG = Logger.newLog(Server.class);
 
   private static final int RELAY_REFRESH_MS = 5000;  // 5 seconds
+
+private static final long LOG_REFRESH_MS = 20000;
 
   private final Timeline timeline = new Timeline();
 
@@ -79,6 +77,8 @@ public final class Server {
 
   private final Relay relay;
   private Uuid lastSeen = Uuid.NULL;
+
+  private String persistentFile;
 
   public Server(final Uuid id, final Secret secret, final Relay relay, final String persistentFile) {
 
@@ -132,13 +132,14 @@ public final class Server {
         //if a user can be created
         //then we will add the command to the queue
         if(user != null){
-        	String userAddCommand = "U-ADD ";
-            userAddCommand += user.id.toString() + " ";
-            userAddCommand += user.name + " ";
-            userAddCommand += user.creation.inMs();
+        	String userAddCommand = "U-ADD "
+                 + user.id.toString() + " "
+                 + user.name + " "
+                 + user.creation.inMs();
+            
 
-            //u-add UUID String Time
-            persistentLog.add(userAddCommand);
+            //add command to queue
+            PersistentLog.writeQueue(userAddCommand);
             
         }
         else{
@@ -220,48 +221,73 @@ public final class Server {
         Serializers.collection(Message.SERIALIZER).write(out, messages);
       }
     });
-
+    
     this.timeline.scheduleNow(new Runnable() {
-      @Override
-      public void run() {
-        try {
+        @Override
+        public void run() {
+          try {
 
-          LOG.info("Reading update from relay...");
+        	  LOG.info("Reading update from relay...");
 
-          for (final Relay.Bundle bundle : relay.read(id, secret, lastSeen, 32)) {
-            onBundle(bundle);
-            lastSeen = bundle.id();
+              for (final Relay.Bundle bundle : relay.read(id, secret, lastSeen, 32)) {
+                onBundle(bundle);
+                lastSeen = bundle.id();
+              }
+            
+            try{
+            	
+            	// if queue has 5 or more commands, write to file
+          	  if (PersistentLog.persistentQueue.size() >= 5) {
+          		  LOG.info("Writing commands to transaction log.");
+          	  
+          		  
+          		  PersistentLog.writeFile(persistentFile);
+          		  
+            }
+            }
+            catch(Exception e){
+          	  LOG.error(e, "Unable to read from file");
+            }
+            
+            
+            
+
+          } catch (Exception ex) {
+
+            LOG.error(ex, "Failed to read update from relay.");
+
           }
-          
-          try{
-        	  persistentDataWriter = new PrintWriter(new FileWriter(persistentFile, true));
-          
-        	  while(!persistentLog.isEmpty()){
-        		  persistentDataWriter.println(persistentLog.pop());
-        	  }
-          }  
-          catch(Exception e){
-        	  LOG.error(e, "Unable to read from file");
-          }
-          finally{
-        	  persistentDataWriter.close();
-          }
-          
-          
 
-        } catch (Exception ex) {
-
-          LOG.error(ex, "Failed to read update from relay.");
-
+          timeline.scheduleIn(RELAY_REFRESH_MS, this);
         }
+      });
+    
 
-        timeline.scheduleIn(RELAY_REFRESH_MS, this);
-      }
-    });
+    this.timeline.scheduleIn(LOG_REFRESH_MS, new Runnable() {
+        @Override
+        public void run() {
+          try {
+          	  
+            //writes to file every twenty seconds regardless of size of queue 
+        	  
+        	 LOG.info("Writing commands to transaction log.");
+          	PersistentLog.writeFile(persistentFile);
+           
+            
+          } catch (Exception ex) {
+
+        	  LOG.error(ex, "Unable to export to transaction log file.");
+
+          }
+
+          timeline.scheduleIn(LOG_REFRESH_MS, this);
+        }
+      });
   }
+  
 
-  //adds new user at the start
-  public void addNewUser(String id, String name, String time){
+//adds new user at the start
+public void addNewUser(String id, String name, String time){
 	  
 	  //converts strings to necessary objects
 	  Uuid userid;
@@ -269,14 +295,15 @@ public final class Server {
 		userid = Uuid.parse(id);
 		Time usercreation = Time.fromMs(Long.parseLong(time));
 		  
-		this.controller.newUser(userid, name, usercreation);
+		//adds user
+		controller.newUser(userid, name, usercreation);
 	} catch (IOException e) {
 		LOG.info("Could not read in users from persistent log");
 		e.printStackTrace();
 	}	  
 	  
 	  
-  }
+} 
   
 
 public void handleConnection(final Connection connection) {
