@@ -246,6 +246,21 @@ public final class Chat {
       }
     });
 
+    // status-update ( list changes in user interests )
+    //
+    // Add a command that will print all changes to the interests of the user since the last status-update call
+    // "status-update" while on the user panel.
+    //
+    panel.register("status-update", new Panel.Command() {
+      @Override
+      public void invoke(List<String> args) {
+        while (!user.user.interestChanges.isEmpty()) {
+          System.out.format(
+                  "UPDATE : %s\n", user.user.interestChanges.pop());
+        }
+      }
+    });
+
     // C-LIST (list conversations)
     //
     // Add a command that will print all conversations when the user enters
