@@ -94,9 +94,18 @@ public final class Server {
         final String content = Serializers.STRING.read(in);
 
         final Message message = controller.newMessage(author, conversation, content);
-        // TODO: add the message.id to the queues of all the users in the set of interested users (from the ^ conversation)
-        // TODO: set of interestedUsers in Conversations or Users
+
+        // adding change of the conversation (interested conversation has new message)
+        // TODO: add the message.id to the queues of all the users in the set of interested users (of the ^ conversation)
+        // TODO: set of interestedUsers in Conversation
         for(Uuid interestedUser : view.findConversation(conversation).interestedUsers){
+          view.findUser(interestedUser).interestChanges.add(message.id);
+        }
+
+        // adding change of the conversation (interested user has added new message)
+        // TODO: add the message.id to the queues of all the users in the set of interested users (of the ^ user)
+        // TODO: set of interestedUsers in User
+        for(Uuid interestedUser : view.findUser(author).interestedUsers){
           view.findUser(interestedUser).interestChanges.add(message.id);
         }
 
@@ -131,6 +140,13 @@ public final class Server {
         final String title = Serializers.STRING.read(in);
         final Uuid owner = Uuid.SERIALIZER.read(in);
         final ConversationHeader conversation = controller.newConversation(title, owner);
+
+        // adding change of the user (interested user is making a new conversation)
+        // TODO: add the conversation.id to the queues of all the users in the set of interested users (of the ^ owner)
+        // TODO: set of interestedUsers in User
+        for(Uuid interestedUser : view.findUser(owner).interestedUsers){
+          view.findUser(interestedUser).interestChanges.add(conversation.id);
+        }
 
         Serializers.INTEGER.write(out, NetworkCode.NEW_CONVERSATION_RESPONSE);
         Serializers.nullable(ConversationHeader.SERIALIZER).write(out, conversation);
