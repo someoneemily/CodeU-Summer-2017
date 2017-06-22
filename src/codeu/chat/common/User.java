@@ -52,14 +52,16 @@ public final class User {
   public final Uuid id;
   public final String name;
   public final Time creation;
-  public final LinkedList<String> interestChanges;
+  public final LinkedHashSet<Uuid> interestChanges;
+  public final HashSet<Uuid> interestedUsers;
 
   public User(Uuid id, String name, Time creation) {
 
     this.id = id;
     this.name = name;
     this.creation = creation;
-    this.interestChanges = new LinkedList<String>();
+    this.interestChanges = new LinkedHashSet<Uuid>();
+    this.interestedUsers = new HashSet<Uuid>();
 
   }
 }

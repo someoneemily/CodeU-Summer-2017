@@ -29,6 +29,7 @@ import codeu.chat.client.core.MessageContext;
 import codeu.chat.client.core.UserContext;
 import codeu.chat.common.ServerInfo;
 import codeu.chat.util.Tokenizer;
+import codeu.chat.util.Uuid;
 
 public final class Chat {
 
@@ -254,10 +255,11 @@ public final class Chat {
     panel.register("status-update", new Panel.Command() {
       @Override
       public void invoke(List<String> args) {
-        while (!user.user.interestChanges.isEmpty()) {
+        for (Uuid changeId : user.user.interestChanges) {
           System.out.format(
-                  "UPDATE : %s\n", user.user.interestChanges.pop());
+                  "UPDATE : %s\n", changeId);
         }
+        user.user.interestChanges.clear();
       }
     });
 

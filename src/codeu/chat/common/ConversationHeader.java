@@ -17,6 +17,7 @@ package codeu.chat.common;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.*;
 
 import codeu.chat.util.Serializer;
 import codeu.chat.util.Serializers;
@@ -54,6 +55,7 @@ public final class ConversationHeader {
   public final Uuid owner;
   public final Time creation;
   public final String title;
+  public final HashSet<Uuid> interestedUsers;
 
   public ConversationHeader(Uuid id, Uuid owner, Time creation, String title) {
 
@@ -61,6 +63,7 @@ public final class ConversationHeader {
     this.owner = owner;
     this.creation = creation;
     this.title = title;
+    this.interestedUsers = new HashSet<Uuid>();
 
   }
 }
