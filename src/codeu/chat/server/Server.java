@@ -94,6 +94,11 @@ public final class Server {
         final String content = Serializers.STRING.read(in);
 
         final Message message = controller.newMessage(author, conversation, content);
+        // TODO: add the message.id to the queues of all the users in the set of interested users (from the ^ conversation)
+        // TODO: set of interestedUsers in Conversations or Users
+        for(Uuid interestedUser : view.findConversation(conversation).interestedUsers){
+          view.findUser(interestedUser).interestChanges.add(message.id);
+        }
 
         Serializers.INTEGER.write(out, NetworkCode.NEW_MESSAGE_RESPONSE);
         Serializers.nullable(Message.SERIALIZER).write(out, message);
