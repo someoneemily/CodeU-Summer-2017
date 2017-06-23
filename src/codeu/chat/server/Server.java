@@ -433,4 +433,10 @@ public void addNewUser(String id, String name, String time){
       }
     };
   }
+
+
+public void importMessage(Uuid messageId, Uuid userId, Uuid convoId, String content, Time time) {
+	// TODO Auto-generated method stub
+	
+}
 }

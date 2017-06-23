@@ -16,6 +16,7 @@
 package codeu.chat;
 
 import java.io.IOException;
+
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -26,12 +27,15 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileReader;
 
+import codeu.chat.common.Message;
 import codeu.chat.common.Relay;
 import codeu.chat.common.Secret;
 import codeu.chat.common.User;
 import codeu.chat.server.NoOpRelay;
 import codeu.chat.server.RemoteRelay;
 import codeu.chat.server.Server;
+import codeu.chat.server.Model;
+import codeu.chat.server.Controller;
 import codeu.chat.util.Logger;
 import codeu.chat.util.PersistentLog;
 import codeu.chat.util.RemoteAddress;
@@ -46,7 +50,7 @@ final class ServerMain {
 
 	
   private static final Logger.Log LOG = Logger.newLog(ServerMain.class);
-  
+
 //This is the directory where it is safe to store data across runs
   // of the server.
   private static File persistentPath = null;
@@ -66,9 +70,10 @@ final class ServerMain {
 
     Uuid id = null;
     Secret secret = null;
-    
-    
-    
+    int port = -1;
+    // This is the directory where it is safe to store data accross runs
+    // of the server.
+
     RemoteAddress relayAddress = null;
     
     
@@ -107,8 +112,11 @@ final class ServerMain {
       LOG.error(ex, "Failed to establish connections");
 
     }
+    
+    
   }
 
+  
   private static void runServer(Uuid id,
                                 Secret secret,
                                 ConnectionSource serverSource,
@@ -118,27 +126,53 @@ final class ServerMain {
                         new NoOpRelay() :
                         new RemoteRelay(relaySource);
 
-    //name of persistentLog file   -- unique to port           
-    String persistentFileName = persistentPath + "//persistentLog" + port + ".txt";
-    
-    final Server server = new Server(id, secret, relay, persistentFileName);
+
+    String persistentFileName = persistentPath + "/persistentLog.txt";
+    File persistentFile = new File(persistentFileName); // file of transaction log
+    // new Server instance
+    final Server server = new Server(id, secret, relay, persistentFileName);    
+
 
     LOG.info("Created server.");
+
+    // read from transaction log file
+    try {
+    	// file already exists
+    	if (!persistentFile.createNewFile()) {
+    	  	  BufferedReader reader = new BufferedReader(new FileReader(persistentFile));
+    	  	  
+    	      try {
+    	      	  String line = reader.readLine();
+    	      	  
+    	      	  while ((line = reader.readLine()) != null) {
+    	      		  
+    	      		  String[] command = line.split("\\s+");
+    	      		  
+    	      		  if (command[0].equals("M-ADD")) {
+    	      			  Uuid messageId = new Uuid(Integer.parseInt(command[1]));
+    	      			  Uuid userId = new Uuid(Integer.parseInt(command[2]));
+    	      			  Uuid convoId = new Uuid(Integer.parseInt(command[3]));
+    	      			  String content = command[4];
+    	      			  Time time = Time.fromMs(Long.parseLong(command[5]));
+    	      			  
+    	      			  server.importMessage(messageId,userId,convoId,content,time);
+    	      		  }
+    	      		  
+    	      	  }
+    	      	  
+    	      	  
+    	        } catch (IOException ex) {
+    	        	
+    	        	LOG.error(ex,  "Failed to import transaction log");
+    	        	
+    	        }
+    		
+    	}
+    } catch (IOException ex) {
+    	LOG.error(ex, "Failed to import past transaction log.");
+    }
     
-    
-    
-    //location where persistentLog will be written to
-    
-    
-    //reads in the file
-    File persistentFile = new File(persistentFileName);
-    PersistentLog.read(persistentFile, server);
-      
-    
-    
-    
-    
-    
+
     while (true) {
 
       try {
