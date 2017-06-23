@@ -43,10 +43,16 @@ public class PersistentLog {
 								server.addNewUser(command[1], command[2], command[3]);
 								break;
 
-							//user should be added
+							//conversation should be added
 							case "C-ADD":
 
 								server.addNewConversation(command[1], command[2], command[3], command[4]);
+								break;
+						
+							//message should be added
+							case "M-ADD":
+								
+								server.addNewMessage(command[1], command[2], command[3], command[4],command[5]);
 								break;
 	    			}
 				}

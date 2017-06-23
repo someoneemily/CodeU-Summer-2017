@@ -110,7 +110,24 @@ private static final long LOG_REFRESH_MS = 20000;
         final String content = Serializers.STRING.read(in);
 
         final Message message = controller.newMessage(author, conversation, content);
+        
+        //if message does not exist
+        //create new message
+        if (message != null) {
+         	String messageAddCommand = "M-ADD " + 
+         			message.id.toString() + " " + 
+         			author.toString() + " " +
+         			conversation.toString() + " " +
+         			content + " " +
+         			message.creation.inMs();        	
 
+            //add command to queue
+            PersistentLog.writeQueue(messageAddCommand);
+         } else {
+        	 
+        	LOG.info("unable to create message " + content);
+        }
+        
         Serializers.INTEGER.write(out, NetworkCode.NEW_MESSAGE_RESPONSE);
         Serializers.nullable(Message.SERIALIZER).write(out, message);
 
@@ -118,6 +135,7 @@ private static final long LOG_REFRESH_MS = 20000;
             author,
             conversation,
             message.id));
+        
       }
     });
 
@@ -286,13 +304,13 @@ private static final long LOG_REFRESH_MS = 20000;
           	  
             //writes to file every twenty seconds regardless of size of queue 
         	  
-        	 LOG.info("Writing commands to transaction log.");
+        	LOG.info("Writing commands to transaction log.");
           	PersistentLog.writeFile(persistentFile);
            
             
           } catch (Exception ex) {
 
-        	  LOG.error(ex, "Unable to export to transaction log file.");
+        	LOG.error(ex, "Unable to export to transaction log file.");
 
           }
 
@@ -321,7 +339,7 @@ public void addNewUser(String id, String name, String time){
 	  
 }
 
-  //adds new user at the start
+  //adds new conversation at the start
   public void addNewConversation(String c_id, String c_owner, String creation, String title){
 
     //converts strings to necessary objects
@@ -332,7 +350,7 @@ public void addNewUser(String id, String name, String time){
       owner = Uuid.parse(c_owner);
       Time creationTime = Time.fromMs(Long.parseLong(creation));
 
-      //adds user
+      //adds conversation
       controller.newConversation(id, title, owner, creationTime);
     } catch (IOException e) {
 
@@ -340,8 +358,31 @@ public void addNewUser(String id, String name, String time){
       e.printStackTrace();
 
     }
+  }
+    
+    //adds new message to conversation
+    public void addNewMessage(String messageIdString, String userIdString, String convoIdString, String content, String timeString){
+    	
+    	//converts strings
+    	Uuid messageId;
+    	Uuid userId;
+    	Uuid convoId;
 
+        try {
+          messageId = Uuid.parse(messageIdString);
+          userId = Uuid.parse(userIdString);
+          convoId = Uuid.parse(convoIdString);
+          Time time = Time.fromMs(Long.parseLong(timeString));
 
+          //adds message
+          controller.newMessage(messageId, userId, convoId, content, time);
+          
+        } catch (IOException e) {
+
+          LOG.info("Could not read in conversation from persistent log");
+          e.printStackTrace();
+
+        } 
   }
 
 
@@ -433,10 +474,4 @@ public void addNewUser(String id, String name, String time){
       }
     };
   }
-
-
-public void importMessage(Uuid messageId, Uuid userId, Uuid convoId, String content, Time time) {
-	// TODO Auto-generated method stub
-	
-}
 }
