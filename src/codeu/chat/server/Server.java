@@ -83,26 +83,44 @@ public final class Server {
         }
     });
 
-    // interest info - a client wants to know the specific user, conversation and message that was altered in a status update
-    this.commands.put(NetworkCode.INTEREST_INFO_REQUEST, new Command(){
+    // interest info - a client wants to know the specific conversation that was added
+    this.commands.put(NetworkCode.INTEREST_CONVERSATION_REQUEST, new Command(){
 
       public void onMessage(InputStream in, OutputStream out) throws IOException {
 
-        Serializers.INTEGER.write(out, NetworkCode.INTEREST_INFO_RESPONSE);
-
-        final Uuid author = Uuid.SERIALIZER.read(in);
         final Uuid conversation = Uuid.SERIALIZER.read(in);
-        final Uuid message = Uuid.SERIALIZER.read(in);
+        final Uuid user = Uuid.SERIALIZER.read(in);
 
-        Serializers.STRING.write(out, view.findUser(author));
-        Serializers.STRING.write(out, view.findConversation(conversation));
-        Serializers.STRING.write(out, view.findMessage(message));
-        Serializers.nullable(Message.SERIALIZER).write(out, view.findMessage(message));
+        Serializers.INTEGER.write(out, NetworkCode.INTEREST_CONVERSATION_RESPONSE);
+        Serializers.nullable(ConversationHeader.SERIALIZER).write(out, view.findConversation(conversation));
+        Serializers.nullable(User.SERIALIZER).write(out, view.findUser(user));
         // TODO: return two different types: messages and conversations
         // TODO: make two different methods returning with Serializers.nullable(Message.SERIALIZER).write(out,message);
 
       }
     });
+
+    // interest info - a client wants to know the specific message that was added to a conversation or by a user
+    this.commands.put(NetworkCode.INTEREST_MESSAGE_REQUEST, new Command(){
+
+      public void onMessage(InputStream in, OutputStream out) throws IOException {
+
+        final Uuid conversation = Uuid.SERIALIZER.read(in);
+        final Uuid message = Uuid.SERIALIZER.read(in);
+        final Uuid user = Uuid.SERIALIZER.read(in);
+//        Serializers.STRING.write(out, view.findUser(author));
+//        Serializers.STRING.write(out, view.findConversation(conversation));
+//        Serializers.STRING.write(out, view.findMessage(message));
+        Serializers.INTEGER.write(out, NetworkCode.INTEREST_MESSAGE_RESPONSE);
+        Serializers.nullable(ConversationHeader.SERIALIZER).write(out, view.findConversation(conversation));
+        Serializers.nullable(Message.SERIALIZER).write(out, view.findMessage(message));
+        Serializers.nullable(User.SERIALIZER).write(out, view.findUser(user));
+        // TODO: return two different types: messages and conversations
+        // TODO: make two different methods returning with Serializers.nullable(Message.SERIALIZER).write(out,message);
+
+      }
+    });
+
 
 
     // New Message - A client wants to add a new message to the back end.
@@ -120,14 +138,14 @@ public final class Server {
         // TODO: add the message.id to the queues of all the users in the set of interested users (of the ^ conversation)
         // TODO: set of interestedUsers in Conversation
         for(Uuid interestedUser : view.findConversation(conversation).interestedUsers){
-          view.findUser(interestedUser).interestChanges.add("m " + message.id);
+          view.findUser(interestedUser).interestChanges.add("m " + conversation + " " + message.id + " " + author);
         }
 
         // adding change of the conversation (interested user has added new message)
         // TODO: add the message.id to the queues of all the users in the set of interested users (of the ^ user)
         // TODO: set of interestedUsers in User
         for(Uuid interestedUser : view.findUser(author).interestedUsers){
-          view.findUser(interestedUser).interestChanges.add("m " + message.id);
+          view.findUser(interestedUser).interestChanges.add("m " + conversation + " " + message.id + " " + author);
         }
 
         Serializers.INTEGER.write(out, NetworkCode.NEW_MESSAGE_RESPONSE);
@@ -166,7 +184,7 @@ public final class Server {
         // TODO: add the conversation.id to the queues of all the users in the set of interested users (of the ^ owner)
         // TODO: set of interestedUsers in User
         for(Uuid interestedUser : view.findUser(owner).interestedUsers){
-          view.findUser(interestedUser).interestChanges.add("c "+ conversation.id);
+          view.findUser(interestedUser).interestChanges.add("c "+ conversation.id + " " + owner);
         }
 
         Serializers.INTEGER.write(out, NetworkCode.NEW_CONVERSATION_RESPONSE);

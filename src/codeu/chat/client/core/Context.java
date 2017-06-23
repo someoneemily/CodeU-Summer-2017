@@ -46,6 +46,7 @@ public final class Context {
     return view.getInfo();
   }
 
+
   public Iterable<UserContext> allUsers() {
     final Collection<UserContext> users = new ArrayList<>();
     for (final User user : view.getUsers()) {

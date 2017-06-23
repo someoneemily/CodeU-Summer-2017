@@ -56,5 +56,15 @@ public interface BasicView {
   //
   // returns ServerInfo with the correct startTime and version instantiated
   ServerInfo getInfo();
+
+  // Get InterestInfo
+  //
+  // returns InterestInfo with the conversation and user
+  InterestInfo getInterestConversation(Uuid c_id, Uuid u_id);
+
+  // Get InterestInfo
+  //
+  // returns InterestInfo with the conversation and message and user
+  InterestInfo getInterestMessage(Uuid c_id, Uuid m_id, Uuid u_id);
   
 }

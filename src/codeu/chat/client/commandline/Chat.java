@@ -27,11 +27,15 @@ import codeu.chat.client.core.Context;
 import codeu.chat.client.core.ConversationContext;
 import codeu.chat.client.core.MessageContext;
 import codeu.chat.client.core.UserContext;
+import codeu.chat.common.InterestInfo;
 import codeu.chat.common.ServerInfo;
+import codeu.chat.util.Logger;
 import codeu.chat.util.Tokenizer;
 import codeu.chat.util.Uuid;
 
 public final class Chat {
+
+  private final static Logger.Log LOG = Logger.newLog(Chat.class);
 
   // PANELS
   //
@@ -255,19 +259,36 @@ public final class Chat {
     panel.register("status-update", new Panel.Command() {
       @Override
       public void invoke(List<String> args) {
-        for (String change : user.user.interestChanges) {
-          String[] changeComponent = change.split(" ");
-          switch (changeComponent[0]){
-            Uuid changeId = Uuid.parse(changeComponent[1]);
-            // TODO: make an equivalent serverinfo class to communicate between chat and server.controller
-            case "c" : System.out.format(
-                    "UPDATE : %s has made a new conversation: %s\n", ); break;
-            case "m" : System.out.format(
-                    "UPDATE : %s added a new message to %s: \n", changeId); break;
-          }
+        try {
+          for (String change : user.user.interestChanges) {
+            String[] changeComponent = change.split(" ");
+            Uuid c_id = Uuid.parse(changeComponent[1]);
+            Uuid u_id = null;
+            InterestInfo interestInfo = null;
 
+            switch (changeComponent[0]) {
+              // TODO: make an equivalent serverinfo class to communicate between chat and server.controller
+              case "c":
+                u_id = Uuid.parse(changeComponent[2]);
+                interestInfo = user.getInterestConversation(c_id, u_id);
+                System.out.format(
+                        "UPDATE : %s has made a new conversation: %s\n", interestInfo.user.name, interestInfo.conversation.title);
+                break;
+              case "m":
+                Uuid m_id = Uuid.parse(changeComponent[2]);
+                u_id = Uuid.parse(changeComponent[3]);
+                interestInfo = user.getInterestMessage(c_id, m_id, u_id);
+                System.out.format(
+                        "UPDATE : %s added a new message to %s: %s\n", interestInfo.user.name, interestInfo.conversation.title, interestInfo.message.content);
+                break;
+            }
+
+          }
+          user.user.interestChanges.clear();
+        }catch (IOException e) {
+          LOG.error("ERROR: could not parse Uuid of status changes");
+          System.exit(1);
         }
-        user.user.interestChanges.clear();
       }
     });
 

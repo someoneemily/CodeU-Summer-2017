@@ -4,15 +4,24 @@ import java.io.*;
 import java.util.*;
 
 public class InterestInfo {
-    public static conversationTitle;
-    public static author;
-    public static message;
 
-    public InterestInfo (String conversationTitle, String author, String message){
+    public final ConversationHeader conversation;
+    public final Message message;
+    public final User user;
 
-        this.conversation = conversationTitle;
-        this.author = author;
+    public InterestInfo (ConversationHeader conversation, User user){
+
+        this.conversation = conversation;
+        this.user = user;
+        this.message = null;
+    }
+
+    public InterestInfo (ConversationHeader conversation, Message message, User user){
+
+        this.conversation = conversation;
         this.message = message;
+        this.user = user;
 
     }
+
 }

@@ -20,6 +20,7 @@ import java.util.Collection;
 import codeu.chat.common.BasicView;
 import codeu.chat.common.ConversationHeader;
 import codeu.chat.common.ConversationPayload;
+import codeu.chat.common.InterestInfo;
 import codeu.chat.common.Message;
 import codeu.chat.common.NetworkCode;
 import codeu.chat.common.ServerInfo;
@@ -149,6 +150,60 @@ final class View implements BasicView {
     	  final Time startTime = Time.SERIALIZER.read(connection.in());
 
           return new ServerInfo(version, startTime);
+      } else {
+        LOG.error("Server did not respond with type of response expected");
+      }
+    } catch (Exception ex) {
+
+      System.out.println("ERROR: Exception during connection call on server. Check log for details.");
+      LOG.error(ex, "Exception during call on server.");
+    }
+    return null;
+  }
+
+  public InterestInfo getInterestConversation(Uuid c_id, Uuid u_id) {
+
+    try (final Connection connection = source.connect()) {
+
+      Serializers.INTEGER.write(connection.out(), NetworkCode.INTEREST_CONVERSATION_REQUEST);
+
+      Uuid.SERIALIZER.write(connection.out(), c_id);
+      Uuid.SERIALIZER.write(connection.out(), u_id);
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.INTEREST_CONVERSATION_RESPONSE) {
+
+        final ConversationHeader conversation = Serializers.nullable(ConversationHeader.SERIALIZER).read(connection.in());
+        final User user = Serializers.nullable(User.SERIALIZER).read(connection.in());
+
+        return new InterestInfo(conversation, user);
+      } else {
+        LOG.error("Server did not respond with type of response expected");
+      }
+    } catch (Exception ex) {
+
+      System.out.println("ERROR: Exception during connection call on server. Check log for details.");
+      LOG.error(ex, "Exception during call on server.");
+    }
+    return null;
+  }
+
+  public InterestInfo getInterestMessage(Uuid c_id, Uuid m_id, Uuid u_id) {
+
+    try (final Connection connection = source.connect()) {
+
+      Serializers.INTEGER.write(connection.out(), NetworkCode.INTEREST_MESSAGE_REQUEST);
+
+      Uuid.SERIALIZER.write(connection.out(), c_id);
+      Uuid.SERIALIZER.write(connection.out(), m_id);
+      Uuid.SERIALIZER.write(connection.out(), u_id);
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.INTEREST_MESSAGE_RESPONSE) {
+
+        final ConversationHeader conversation = Serializers.nullable(ConversationHeader.SERIALIZER).read(connection.in());
+        final Message message = Serializers.nullable(Message.SERIALIZER).read(connection.in());
+        final User user = Serializers.nullable(User.SERIALIZER).read(connection.in());
+
+        return new InterestInfo(conversation, message, user);
       } else {
         LOG.error("Server did not respond with type of response expected");
       }
