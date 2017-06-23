@@ -255,9 +255,17 @@ public final class Chat {
     panel.register("status-update", new Panel.Command() {
       @Override
       public void invoke(List<String> args) {
-        for (Uuid changeId : user.user.interestChanges) {
-          System.out.format(
-                  "UPDATE : %s\n", changeId);
+        for (String change : user.user.interestChanges) {
+          String[] changeComponent = change.split(" ");
+          switch (changeComponent[0]){
+            Uuid changeId = Uuid.parse(changeComponent[1]);
+            // TODO: make an equivalent serverinfo class to communicate between chat and server.controller
+            case "c" : System.out.format(
+                    "UPDATE : %s has made a new conversation: %s\n", ); break;
+            case "m" : System.out.format(
+                    "UPDATE : %s added a new message to %s: \n", changeId); break;
+          }
+
         }
         user.user.interestChanges.clear();
       }
