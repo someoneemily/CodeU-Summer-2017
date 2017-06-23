@@ -164,6 +164,22 @@ private static final long LOG_REFRESH_MS = 20000;
         final Uuid owner = Uuid.SERIALIZER.read(in);
         final ConversationHeader conversation = controller.newConversation(title, owner);
 
+        if(conversation != null){
+          String conversationAddCommand = "C-ADD "
+                  + conversation.id.toString() + " "
+                  + conversation.owner.toString() + " "
+                  + conversation.creation.inMs() + " "
+                  + conversation.title;
+
+          //add command to queue
+          PersistentLog.writeQueue(conversationAddCommand);
+
+        }
+        else{
+
+          LOG.info("unable to create conversation " + title);
+        }
+
         Serializers.INTEGER.write(out, NetworkCode.NEW_CONVERSATION_RESPONSE);
         Serializers.nullable(ConversationHeader.SERIALIZER).write(out, conversation);
       }
@@ -303,10 +319,33 @@ public void addNewUser(String id, String name, String time){
 	}	  
 	  
 	  
-} 
-  
+}
 
-public void handleConnection(final Connection connection) {
+  //adds new user at the start
+  public void addNewConversation(String c_id, String c_owner, String creation, String title){
+
+    //converts strings to necessary objects
+    Uuid id;
+    Uuid owner;
+    try {
+      id = Uuid.parse(c_id);
+      owner = Uuid.parse(c_owner);
+      Time creationTime = Time.fromMs(Long.parseLong(creation));
+
+      //adds user
+      controller.newConversation(id, title, owner, creationTime);
+    } catch (IOException e) {
+
+      LOG.info("Could not read in conversation from persistent log");
+      e.printStackTrace();
+
+    }
+
+
+  }
+
+
+  public void handleConnection(final Connection connection) {
     timeline.scheduleNow(new Runnable() {
       @Override
       public void run() {
