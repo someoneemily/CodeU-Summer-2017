@@ -346,7 +346,7 @@ public final class Chat {
         public void invoke(List<String> args) {
         	final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
         	if (name.length() > 0) {
-                final User userInterest = user.findUser(name);
+                final User userInterest = findUser(name);
                 if (userInterest == null) {
                   System.out.format("ERROR: No user with name '%s'\n", name);
                 } else {
@@ -356,6 +356,16 @@ public final class Chat {
                 System.out.println("ERROR: Missing <name>");
               }
         }
+        
+        //Find user object by name
+    	private User findUser(String name) {
+    		for (final UserContext userCon : user.users()) {
+    			if (name.equals(userCon.user.name)) {
+    				return userCon.user;
+    			}
+    		}
+    		return null;
+    	}
       });
     
     // U-INT-DEL (remove user interest)
@@ -368,7 +378,7 @@ public final class Chat {
         public void invoke(List<String> args) {
         	final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
         	if (name.length() > 0) {
-                final User userInterest = user.findUser(name);
+                final User userInterest = findUser(name);
                 if (userInterest == null) {
                   System.out.format("ERROR: No user with name '%s'\n", name);
                 } else {
@@ -378,6 +388,16 @@ public final class Chat {
                 System.out.println("ERROR: Missing <name>");
               }
         }
+        
+        //Find user object by name
+    	private User findUser(String name) {
+    		for (final UserContext userCon : user.users()) {
+    			if (name.equals(userCon.user.name)) {
+    				return userCon.user;
+    			}
+    		}
+    		return null;
+    	}
       });  
     
     // C-INT-ADD (add conversation interest)
@@ -386,21 +406,31 @@ public final class Chat {
     // for the user in the user panel.
     //
     panel.register("c-int-add", new Panel.Command() {
-        @Override
-        public void invoke(List<String> args) {
-        	final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
-        	if (name.length() > 0) {
-                final ConversationHeader convoInterest = user.findConversation(name);
-                if (convoInterest == null) {
-                  System.out.format("ERROR: No user with name '%s'\n", name);
-                } else {
-                  convoInterest.interestedUsers.add(user.user.id);
-                }
-              } else {
-                System.out.println("ERROR: Missing <title>");
-              }
-        }
-      }); 
+    	@Override
+    	public void invoke(List<String> args) {
+    		final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
+    		if (name.length() > 0) {
+    			final ConversationHeader convoInterest = findConversation(name);
+    			if (convoInterest == null) {
+    				System.out.format("ERROR: No user with name '%s'\n", name);
+    			} else {
+    				convoInterest.interestedUsers.add(user.user.id);
+    			}
+    		} else {
+    			System.out.println("ERROR: Missing <title>");
+    		}
+    	}
+
+    	//Find conversation object by name
+    	private ConversationHeader findConversation(String title) {
+    		for (final ConversationContext conversation : user.conversations()) {
+    			if (title.equals(conversation.conversation.title)) {
+    				return conversation.conversation;
+    			}
+    		}
+    		return null;
+    	}
+    }); 
     
     // C-INT-DEL (remove conversation interest)
     //
@@ -408,21 +438,31 @@ public final class Chat {
     // interests in the user panel.
     //
     panel.register("c-int-del", new Panel.Command() {
-        @Override
-        public void invoke(List<String> args) {
-        	final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
-        	if (name.length() > 0) {
-                final ConversationHeader convoInterest = user.findConversation(name);
-                if (convoInterest == null) {
-                  System.out.format("ERROR: No user with name '%s'\n", name);
-                } else {
-                  convoInterest.interestedUsers.remove(user.user.id);
-                }
-              } else {
-                System.out.println("ERROR: Missing <title>");
-              }
-        }
-      });
+    	@Override
+    	public void invoke(List<String> args) {
+    		final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
+    		if (name.length() > 0) {
+    			final ConversationHeader convoInterest = findConversation(name);
+    			if (convoInterest == null) {
+    				System.out.format("ERROR: No user with name '%s'\n", name);
+    			} else {
+    				convoInterest.interestedUsers.remove(user.user.id);
+    			}
+    		} else {
+    			System.out.println("ERROR: Missing <title>");
+    		}
+    	}
+
+    	//Find conversation object by name
+    	private ConversationHeader findConversation(String title) {
+    		for (final ConversationContext conversation : user.conversations()) {
+    			if (title.equals(conversation.conversation.title)) {
+    				return conversation.conversation;
+    			}
+    		}
+    		return null;
+    	}
+    });
     
     // status-update ( list changes in user interests )
     //

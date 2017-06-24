@@ -43,6 +43,18 @@ public final class UserContext {
         new ConversationContext(user, conversation, view, controller);
   }
 
+  public Iterable<UserContext> users() {
+
+	    // Use all the ids to get all the users and convert them to
+	    // User Contexts.
+	    final Collection<UserContext> all = new ArrayList<>();
+	    for (final User user : view.getUsers()) {
+	      all.add(new UserContext(user, view, controller));
+	    }
+
+	    return all;
+	  }
+  
   public Iterable<ConversationContext> conversations() {
 
     // Use all the ids to get all the conversations and convert them to
@@ -62,14 +74,5 @@ public final class UserContext {
   public InterestInfo getInterestMessage(Uuid c_id, Uuid m_id, Uuid u_id){
     return view.getInterestMessage(c_id, m_id, u_id);
   }
-  
-  public User findUser(String name) {
-	  final User user = controller.findUser(name);
-	  return user;
-  }
-  
-  public ConversationHeader findConversation(String name) {
-	  final ConversationHeader convo = controller.findConversation(name);
-	  return convo;
-  }
+
 }
