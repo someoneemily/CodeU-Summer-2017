@@ -142,6 +142,16 @@ public final class Controller implements RawController, BasicController {
 
     return conversation;
   }
+  
+  @Override
+  public User findUser(String name) {
+	  return model.userByText().first(name);
+  }
+  
+  @Override
+  public ConversationHeader findConversation(String name) {
+	  return model.conversationByText().first(name);
+  }
 
   private Uuid createId() {
 

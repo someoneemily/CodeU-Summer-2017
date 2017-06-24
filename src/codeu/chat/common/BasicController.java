@@ -50,5 +50,17 @@ public interface BasicController {
   //  representing the full state of the conversation on the server.
   //  Whether conversations can have the same title is undefined.
   ConversationHeader newConversation(String title, Uuid owner);
+  
+  // FIND USER
+  //
+  // Find a user that is already in the model given the user's name.
+  // If the user does not exist, the call will fail and return null.
+  User findUser(String name);
+  
+  // FIND CONVERSATION
+  //
+  // Find a user that is already in the model given the user's name.
+  // If the user does not exist, the call will fail and return null.
+  ConversationHeader findConversation(String name);
 
 }

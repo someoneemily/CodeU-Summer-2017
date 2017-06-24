@@ -265,22 +265,6 @@ public final class Server {
       }
     });
   }
-  
-  public User findUser(String name) {
-	  
-	  //TODO add method to find user by name (without Uuid)
-	  //view.findUser(name);
-	  
-	  return null;
-  }
-  
-  public ConversationHeader findConversation(String name) {
-	  
-	  //TODO add method to find user by name (without Uuid)
-	  //view.findConversation(name);
-	  
-	  return null;
-  }
 
   public void handleConnection(final Connection connection) {
     timeline.scheduleNow(new Runnable() {

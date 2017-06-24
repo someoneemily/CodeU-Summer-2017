@@ -346,7 +346,7 @@ public final class Chat {
         public void invoke(List<String> args) {
         	final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
         	if (name.length() > 0) {
-                final User userInterest = find(name);
+                final User userInterest = user.findUser(name);
                 if (userInterest == null) {
                   System.out.format("ERROR: No user with name '%s'\n", name);
                 } else {
@@ -355,14 +355,6 @@ public final class Chat {
               } else {
                 System.out.println("ERROR: Missing <name>");
               }
-        }
-        
-        // Find the user with the given name and return it.
-        // If no user has the given name, this will return null.
-        private User find(String username) {
-          //TODO: find user object by name
-          
-          return null;
         }
       });
     
@@ -376,7 +368,7 @@ public final class Chat {
         public void invoke(List<String> args) {
         	final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
         	if (name.length() > 0) {
-                final User userInterest = find(name);
+                final User userInterest = user.findUser(name);
                 if (userInterest == null) {
                   System.out.format("ERROR: No user with name '%s'\n", name);
                 } else {
@@ -385,14 +377,6 @@ public final class Chat {
               } else {
                 System.out.println("ERROR: Missing <name>");
               }
-        }
-        
-        // Find the user with the given name and return it.
-        // If no user has the given name, this will return null.
-        private User find(String username) {
-          //TODO: find user object by name
-          
-          return null;
         }
       });  
     
@@ -406,7 +390,7 @@ public final class Chat {
         public void invoke(List<String> args) {
         	final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
         	if (name.length() > 0) {
-                final ConversationHeader convoInterest = find(name);
+                final ConversationHeader convoInterest = user.findConversation(name);
                 if (convoInterest == null) {
                   System.out.format("ERROR: No user with name '%s'\n", name);
                 } else {
@@ -415,14 +399,6 @@ public final class Chat {
               } else {
                 System.out.println("ERROR: Missing <title>");
               }
-        }
-        
-        // Find the user with the given name and return it.
-        // If no user has the given name, this will return null.
-        private ConversationHeader find(String convoName) {
-          //TODO: find user object by name
-          
-          return null;
         }
       }); 
     
@@ -436,7 +412,7 @@ public final class Chat {
         public void invoke(List<String> args) {
         	final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
         	if (name.length() > 0) {
-                final ConversationHeader convoInterest = find(name);
+                final ConversationHeader convoInterest = user.findConversation(name);
                 if (convoInterest == null) {
                   System.out.format("ERROR: No user with name '%s'\n", name);
                 } else {
@@ -445,14 +421,6 @@ public final class Chat {
               } else {
                 System.out.println("ERROR: Missing <title>");
               }
-        }
-        
-        // Find the user with the given name and return it.
-        // If no user has the given name, this will return null.
-        private ConversationHeader find(String convoName) {
-          //TODO: find user object by name
-          
-          return null;
         }
       });
     

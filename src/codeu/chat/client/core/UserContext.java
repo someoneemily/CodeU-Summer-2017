@@ -62,4 +62,14 @@ public final class UserContext {
   public InterestInfo getInterestMessage(Uuid c_id, Uuid m_id, Uuid u_id){
     return view.getInterestMessage(c_id, m_id, u_id);
   }
+  
+  public User findUser(String name) {
+	  final User user = controller.findUser(name);
+	  return user;
+  }
+  
+  public ConversationHeader findConversation(String name) {
+	  final ConversationHeader convo = controller.findConversation(name);
+	  return convo;
+  }
 }
