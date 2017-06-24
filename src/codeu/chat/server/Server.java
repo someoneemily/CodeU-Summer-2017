@@ -121,8 +121,6 @@ public final class Server {
       }
     });
 
-
-
     // New Message - A client wants to add a new message to the back end.
     this.commands.put(NetworkCode.NEW_MESSAGE_REQUEST, new Command() {
       @Override
@@ -266,6 +264,22 @@ public final class Server {
         timeline.scheduleIn(RELAY_REFRESH_MS, this);
       }
     });
+  }
+  
+  public User findUser(String name) {
+	  
+	  //TODO add method to find user by name (without Uuid)
+	  //view.findUser(name);
+	  
+	  return null;
+  }
+  
+  public ConversationHeader findConversation(String name) {
+	  
+	  //TODO add method to find user by name (without Uuid)
+	  //view.findConversation(name);
+	  
+	  return null;
   }
 
   public void handleConnection(final Connection connection) {

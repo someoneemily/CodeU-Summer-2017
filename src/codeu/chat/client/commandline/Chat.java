@@ -27,8 +27,10 @@ import codeu.chat.client.core.Context;
 import codeu.chat.client.core.ConversationContext;
 import codeu.chat.client.core.MessageContext;
 import codeu.chat.client.core.UserContext;
+import codeu.chat.common.ConversationHeader;
 import codeu.chat.common.InterestInfo;
 import codeu.chat.common.ServerInfo;
+import codeu.chat.common.User;
 import codeu.chat.util.Logger;
 import codeu.chat.util.Tokenizer;
 import codeu.chat.util.Uuid;
@@ -242,53 +244,22 @@ public final class Chat {
         System.out.println("    Add a new conversation with the given title and join it as the current user.");
         System.out.println("  c-join <title>");
         System.out.println("    Join the conversation as the current user.");
+        System.out.println("  u-int-add <name>");
+        System.out.println("    Add user to interests");
+        System.out.println("  u-int-del <name>");
+        System.out.println("    Remove user from interests");
+        System.out.println("  c-int-add <title>");
+        System.out.println("    Add conversation to interests");
+        System.out.println("  c-int-del <title>");
+        System.out.println("    Remove conversation from interests");
+        System.out.println("  status-update");
+        System.out.println("    Retrieve updates on all interests");
         System.out.println("  info");
-        System.out.println("    Display all info for the current user");
+        System.out.println("    Display all info for the current user");       
         System.out.println("  back");
         System.out.println("    Go back to ROOT MODE.");
         System.out.println("  exit");
         System.out.println("    Exit the program.");
-      }
-    });
-
-    // status-update ( list changes in user interests )
-    //
-    // Add a command that will print all changes to the interests of the user since the last status-update call
-    // "status-update" while on the user panel.
-    //
-    panel.register("status-update", new Panel.Command() {
-      @Override
-      public void invoke(List<String> args) {
-        try {
-          for (String change : user.user.interestChanges) {
-            String[] changeComponent = change.split(" ");
-            Uuid c_id = Uuid.parse(changeComponent[1]);
-            Uuid u_id = null;
-            InterestInfo interestInfo = null;
-
-            switch (changeComponent[0]) {
-              // TODO: make an equivalent serverinfo class to communicate between chat and server.controller
-              case "c":
-                u_id = Uuid.parse(changeComponent[2]);
-                interestInfo = user.getInterestConversation(c_id, u_id);
-                System.out.format(
-                        "UPDATE : %s has made a new conversation: %s\n", interestInfo.user.name, interestInfo.conversation.title);
-                break;
-              case "m":
-                Uuid m_id = Uuid.parse(changeComponent[2]);
-                u_id = Uuid.parse(changeComponent[3]);
-                interestInfo = user.getInterestMessage(c_id, m_id, u_id);
-                System.out.format(
-                        "UPDATE : %s added a new message to %s: %s\n", interestInfo.user.name, interestInfo.conversation.title, interestInfo.message.content);
-                break;
-            }
-
-          }
-          user.user.interestChanges.clear();
-        }catch (IOException e) {
-          LOG.error("ERROR: could not parse Uuid of status changes");
-          System.exit(1);
-        }
       }
     });
 
@@ -362,6 +333,169 @@ public final class Chat {
           }
         }
         return null;
+      }
+    });
+    
+    // U-INT-ADD (add user interest)
+    //
+    // Add a command that will add another user as an interest
+    // for the user in the user panel.
+    //
+    panel.register("u-int-add", new Panel.Command() {
+        @Override
+        public void invoke(List<String> args) {
+        	final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
+        	if (name.length() > 0) {
+                final User userInterest = find(name);
+                if (userInterest == null) {
+                  System.out.format("ERROR: No user with name '%s'\n", name);
+                } else {
+                  userInterest.interestedUsers.add(user.user.id);
+                }
+              } else {
+                System.out.println("ERROR: Missing <name>");
+              }
+        }
+        
+        // Find the user with the given name and return it.
+        // If no user has the given name, this will return null.
+        private User find(String username) {
+          //TODO: find user object by name
+          
+          return null;
+        }
+      });
+    
+    // U-INT-DEL (remove user interest)
+    //
+    // Add a command that will remove a user from the user's 
+    // interests in the user panel.
+    //   
+    panel.register("u-int-del", new Panel.Command() {
+        @Override
+        public void invoke(List<String> args) {
+        	final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
+        	if (name.length() > 0) {
+                final User userInterest = find(name);
+                if (userInterest == null) {
+                  System.out.format("ERROR: No user with name '%s'\n", name);
+                } else {
+                  userInterest.interestedUsers.remove(user.user.id);
+                }
+              } else {
+                System.out.println("ERROR: Missing <name>");
+              }
+        }
+        
+        // Find the user with the given name and return it.
+        // If no user has the given name, this will return null.
+        private User find(String username) {
+          //TODO: find user object by name
+          
+          return null;
+        }
+      });  
+    
+    // C-INT-ADD (add conversation interest)
+    //
+    // Add a command that will add a conversation as an interest
+    // for the user in the user panel.
+    //
+    panel.register("c-int-add", new Panel.Command() {
+        @Override
+        public void invoke(List<String> args) {
+        	final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
+        	if (name.length() > 0) {
+                final ConversationHeader convoInterest = find(name);
+                if (convoInterest == null) {
+                  System.out.format("ERROR: No user with name '%s'\n", name);
+                } else {
+                  convoInterest.interestedUsers.add(user.user.id);
+                }
+              } else {
+                System.out.println("ERROR: Missing <title>");
+              }
+        }
+        
+        // Find the user with the given name and return it.
+        // If no user has the given name, this will return null.
+        private ConversationHeader find(String convoName) {
+          //TODO: find user object by name
+          
+          return null;
+        }
+      }); 
+    
+    // C-INT-DEL (remove conversation interest)
+    //
+    // Add a command that will remove a conversation from the user's 
+    // interests in the user panel.
+    //
+    panel.register("c-int-del", new Panel.Command() {
+        @Override
+        public void invoke(List<String> args) {
+        	final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
+        	if (name.length() > 0) {
+                final ConversationHeader convoInterest = find(name);
+                if (convoInterest == null) {
+                  System.out.format("ERROR: No user with name '%s'\n", name);
+                } else {
+                  convoInterest.interestedUsers.remove(user.user.id);
+                }
+              } else {
+                System.out.println("ERROR: Missing <title>");
+              }
+        }
+        
+        // Find the user with the given name and return it.
+        // If no user has the given name, this will return null.
+        private ConversationHeader find(String convoName) {
+          //TODO: find user object by name
+          
+          return null;
+        }
+      });
+    
+    // status-update ( list changes in user interests )
+    //
+    // Add a command that will print all changes to the interests of the user since the last status-update call
+    // "status-update" while on the user panel.
+    //
+    panel.register("status-update", new Panel.Command() {
+      @Override
+      public void invoke(List<String> args) {
+        try {
+          for (String change : user.user.interestChanges) {
+            String[] changeComponent = change.split(" ");
+            Uuid c_id = Uuid.parse(changeComponent[1]);
+            Uuid u_id = null;
+            InterestInfo interestInfo = null;
+
+            switch (changeComponent[0]) {
+              // TODO: make an equivalent serverinfo class to communicate between chat and server.controller
+              case "c":
+                u_id = Uuid.parse(changeComponent[2]);
+                interestInfo = user.getInterestConversation(c_id, u_id);
+                System.out.format(
+                        "UPDATE : %s has made a new conversation: %s\n", interestInfo.user.name, interestInfo.conversation.title);
+                break;
+                
+              case "m":
+                Uuid m_id = Uuid.parse(changeComponent[2]);
+                u_id = Uuid.parse(changeComponent[3]);
+                interestInfo = user.getInterestMessage(c_id, m_id, u_id);
+                System.out.format(
+                        "UPDATE : %s added a new message to %s: %s\n", interestInfo.user.name, interestInfo.conversation.title, 
+                        interestInfo.message.content);
+                break;
+            }
+
+          }
+          user.user.interestChanges.clear();
+        }catch (IOException e) {
+          LOG.error("ERROR: could not parse Uuid of status changes");
+          System.exit(1);
+        }
       }
     });
 

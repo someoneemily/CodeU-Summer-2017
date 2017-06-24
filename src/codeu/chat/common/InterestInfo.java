@@ -12,8 +12,8 @@ public class InterestInfo {
     public InterestInfo (ConversationHeader conversation, User user){
 
         this.conversation = conversation;
-        this.user = user;
         this.message = null;
+        this.user = user;
     }
 
     public InterestInfo (ConversationHeader conversation, Message message, User user){
