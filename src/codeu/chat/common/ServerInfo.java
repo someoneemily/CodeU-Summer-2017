@@ -21,24 +21,12 @@ public final class ServerInfo{
 		}
 		this.version = parsed;
         this.startTime = Time.now();
-		
 	}
-	
-	/*
-    public ServerInfo(Time startTime){
-        this.startTime = startTime;
-    }
-	public ServerInfo(Uuid version){
-		this.version = version;
-	}
-	*/
 	public ServerInfo(Uuid version, Time startTime){
 		this.version = version;
 		this.startTime = startTime;
 	}
-    public long upTime(){
-        //todo (emily): Why not format it to seconds here?
-        // It'll also help to call it upTimeInSec or upTimeInMS
-        return Time.now().inMs()-(startTime).inMs();
+    public long upTimeInSec(){
+		return (Time.now().inMs()-(startTime).inMs())/1000;
     }
 }

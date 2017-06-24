@@ -51,8 +51,6 @@ public final class Server {
 
   private static final ServerInfo info = new ServerInfo();
   
-  
-
   private interface Command {
     void onMessage(InputStream in, OutputStream out) throws IOException;
   }
@@ -321,7 +319,7 @@ public void addNewUser(String id, String name, String time){
 	  
 }
 
-  //adds new user at the start
+//adds new conversation at the start
   public void addNewConversation(String c_id, String c_owner, String creation, String title){
 
     //converts strings to necessary objects
