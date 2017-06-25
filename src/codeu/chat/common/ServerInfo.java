@@ -33,8 +33,5 @@ public final class ServerInfo{
 		long min = TimeUnit.SECONDS.toMinutes(seconds) - (TimeUnit.SECONDS.toHours(seconds)* 60);
 		long sec = TimeUnit.SECONDS.toSeconds(seconds) - (TimeUnit.SECONDS.toMinutes(seconds) *60);
 		return String.format("%02d:%02d:%02d", hours, min, sec);
-
-
-
     }
 }
