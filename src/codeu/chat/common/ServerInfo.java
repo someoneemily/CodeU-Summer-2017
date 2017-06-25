@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.*;
 import codeu.chat.util.Time;
 import codeu.chat.util.Uuid;
+import java.util.concurrent.TimeUnit;
 
 public final class ServerInfo{
     public final Time startTime;
@@ -28,9 +29,12 @@ public final class ServerInfo{
 	}
     public String upTime(){
 		long seconds = (Time.now().inMs()-(startTime).inMs())/1000;
-		long hours = seconds/3600;
-		long min = seconds%3600/60;
-		long sec = seconds%3600%60;
+		long hours = TimeUnit.SECONDS.toHours(seconds);
+		long min = TimeUnit.SECONDS.toMinutes(seconds) - (TimeUnit.SECONDS.toHours(seconds)* 60);
+		long sec = TimeUnit.SECONDS.toSeconds(seconds) - (TimeUnit.SECONDS.toMinutes(seconds) *60);
 		return String.format("%02d:%02d:%02d", hours, min, sec);
+
+
+
     }
 }
