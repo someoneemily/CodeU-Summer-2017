@@ -50,4 +50,16 @@ public interface BasicController {
   //  representing the full state of the conversation on the server.
   //  Whether conversations can have the same title is undefined.
   ConversationHeader newConversation(String title, Uuid owner);
+  
+  // NEW USER INTEREST
+  //
+  //  Add another user as an interest for the current user.
+  //  Also add current interested user to the set of interested users.
+  void newUserInterest(String name, Uuid user);
+  
+  // NEW CONVERSATION INTEREST
+  //
+  //  Add a conversation as an interest for the current user.
+  //  Also add current interested user to the set of interested users.
+  void newConversationInterest(String title, Uuid id);
 }

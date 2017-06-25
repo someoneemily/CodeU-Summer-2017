@@ -73,9 +73,16 @@ public final class View implements BasicView, SinglesView {
 
   @Override
   public User findUser(Uuid id) { return model.userById().first(id); }
+  
+
+  @Override
+  public User findUser(String name) { return model.userByText().first(name); }
 
   @Override
   public ConversationHeader findConversation(Uuid id) { return model.conversationById().first(id); }
+  
+  @Override
+  public ConversationHeader findConversation(String title) { return model.conversationByText().first(title); }
 
   @Override
   public Message findMessage(Uuid id) { return model.messageById().first(id); }

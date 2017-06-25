@@ -74,5 +74,9 @@ public final class UserContext {
   public InterestInfo getInterestMessage(Uuid c_id, Uuid m_id, Uuid u_id){
     return view.getInterestMessage(c_id, m_id, u_id);
   }
+  
+  public void addUserInterest(String name) {
+	  controller.newUserInterest(name,user.id);
+  }
 
 }

@@ -349,7 +349,7 @@ public final class Chat {
 				final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
 				if (name.length() > 0) {
 					//add to user's interests
-					user.user.interests.add(name);
+					user.addUserInterest(name);
 					
 					//add to user of interest's interested users
 					final User userInterest = findUser(user, name);
@@ -358,6 +358,7 @@ public final class Chat {
 					} else {
 						userInterest.interestedUsers.add(user.user.id);
 						System.out.println(userInterest.name + " - " + userInterest.interestedUsers);
+						System.out.println(user.user.interests);
 					}
 				} else {
 					System.out.println("ERROR: Missing <name>");
@@ -384,6 +385,8 @@ public final class Chat {
 						System.out.format("ERROR: No user with name '%s'\n", name);
 					} else {
 						userInterest.interestedUsers.remove(user.user.id);
+						System.out.println(userInterest.name + " - " + userInterest.interestedUsers);
+						System.out.println(user.user.interests);
 					}
 				} else {
 					System.out.println("ERROR: Missing <name>");
@@ -410,6 +413,8 @@ public final class Chat {
 						System.out.format("ERROR: No user with name '%s'\n", name);
 					} else {
 						convoInterest.interestedUsers.add(user.user.id);
+						System.out.println(convoInterest.title + " - " + convoInterest.interestedUsers);
+						System.out.println(user.user.interests);
 					}
 				} else {
 					System.out.println("ERROR: Missing <title>");
@@ -436,6 +441,8 @@ public final class Chat {
 						System.out.format("ERROR: No user with name '%s'\n", name);
 					} else {
 						convoInterest.interestedUsers.remove(user.user.id);
+						System.out.println(convoInterest.title + " - " + convoInterest.interestedUsers);
+						System.out.println(user.user.interests);
 					}
 				} else {
 					System.out.println("ERROR: Missing <title>");
@@ -509,6 +516,9 @@ public final class Chat {
 				System.out.println("User Info:");
 				System.out.format("  Name : %s\n", user.user.name);
 				System.out.format("  Id   : UUID:%s\n", user.user.id);
+
+				System.out.format("  Interests   : UUID:%s\n", user.user.interests);
+				System.out.format("  Interested   : UUID:%s\n", user.user.interestedUsers);
 			}
 		});
 
@@ -518,7 +528,7 @@ public final class Chat {
 	}
 	
 	//Find user object by name
-	private User findUser(UserContext user,String name) {
+	private User findUser(UserContext user, String name) {
 		for (final UserContext userCon : user.users()) {
 			if (name.equals(userCon.user.name)) {
 				return userCon.user;

@@ -30,12 +30,24 @@ public interface SinglesView {
   // Find the user whose id matches the given id. If no user's id matches
   // the given id, null with be returned.
   User findUser(Uuid id);
+  
+  //FIND USER
+  //
+  // Find the user whose name matches the given name. If no user's name matches
+  // the given name, null with be returned.
+  User findUser(String name);
 
   // FIND CONVERSATION
   //
   // Find the conversation whose id matches the given id. If no conversation's
   // matches the given id, null will be returned.
   ConversationHeader findConversation(Uuid id);
+  
+  //FIND CONVERSATION
+  //
+  // Find the conversation whose title matches the given title. If no conversation's
+  // title matches the given title, null will be returned.
+  ConversationHeader findConversation(String title);
 
   // FIND MESSAGE
   //
