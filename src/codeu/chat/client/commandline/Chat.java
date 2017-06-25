@@ -252,6 +252,8 @@ public final class Chat {
 				System.out.println("    Add conversation to interests");
 				System.out.println("  c-int-del <title>");
 				System.out.println("    Remove conversation from interests");
+				System.out.println("  int-list");
+				System.out.println("    List out all the current user's interests.");
 				System.out.println("  status-update");
 				System.out.println("    Retrieve updates on all interests");
 				System.out.println("  info");
@@ -346,25 +348,20 @@ public final class Chat {
 			public void invoke(List<String> args) {
 				final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
 				if (name.length() > 0) {
-					final User userInterest = findUser(name);
+					//add to user's interests
+					user.user.interests.add(name);
+					
+					//add to user of interest's interested users
+					final User userInterest = findUser(user, name);
 					if (userInterest == null) {
 						System.out.format("ERROR: No user with name '%s'\n", name);
 					} else {
 						userInterest.interestedUsers.add(user.user.id);
+						System.out.println(userInterest.name + " - " + userInterest.interestedUsers);
 					}
 				} else {
 					System.out.println("ERROR: Missing <name>");
 				}
-			}
-
-			//Find user object by name
-			private User findUser(String name) {
-				for (final UserContext userCon : user.users()) {
-					if (name.equals(userCon.user.name)) {
-						return userCon.user;
-					}
-				}
-				return null;
 			}
 		});
 
@@ -378,7 +375,11 @@ public final class Chat {
 			public void invoke(List<String> args) {
 				final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
 				if (name.length() > 0) {
-					final User userInterest = findUser(name);
+					//remove from user's interests
+					user.user.interests.remove(name);
+					
+					//remove from user of interest's interested users
+					final User userInterest = findUser(user, name);
 					if (userInterest == null) {
 						System.out.format("ERROR: No user with name '%s'\n", name);
 					} else {
@@ -387,16 +388,6 @@ public final class Chat {
 				} else {
 					System.out.println("ERROR: Missing <name>");
 				}
-			}
-
-			//Find user object by name
-			private User findUser(String name) {
-				for (final UserContext userCon : user.users()) {
-					if (name.equals(userCon.user.name)) {
-						return userCon.user;
-					}
-				}
-				return null;
 			}
 		});  
 
@@ -410,7 +401,11 @@ public final class Chat {
 			public void invoke(List<String> args) {
 				final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
 				if (name.length() > 0) {
-					final ConversationHeader convoInterest = findConversation(name);
+					//add to user's interests
+					user.user.interests.remove(name);
+					
+					//add to conversation's interested users
+					final ConversationHeader convoInterest = findConversation(user, name);
 					if (convoInterest == null) {
 						System.out.format("ERROR: No user with name '%s'\n", name);
 					} else {
@@ -419,16 +414,6 @@ public final class Chat {
 				} else {
 					System.out.println("ERROR: Missing <title>");
 				}
-			}
-
-			//Find conversation object by name
-			private ConversationHeader findConversation(String title) {
-				for (final ConversationContext conversation : user.conversations()) {
-					if (title.equals(conversation.conversation.title)) {
-						return conversation.conversation;
-					}
-				}
-				return null;
 			}
 		}); 
 
@@ -442,7 +427,11 @@ public final class Chat {
 			public void invoke(List<String> args) {
 				final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
 				if (name.length() > 0) {
-					final ConversationHeader convoInterest = findConversation(name);
+					//remove from user's interests
+					user.user.interests.remove(name);
+					
+					//remove from conversation's interested users
+					final ConversationHeader convoInterest = findConversation(user, name);
 					if (convoInterest == null) {
 						System.out.format("ERROR: No user with name '%s'\n", name);
 					} else {
@@ -452,15 +441,17 @@ public final class Chat {
 					System.out.println("ERROR: Missing <title>");
 				}
 			}
-
-			//Find conversation object by name
-			private ConversationHeader findConversation(String title) {
-				for (final ConversationContext conversation : user.conversations()) {
-					if (title.equals(conversation.conversation.title)) {
-						return conversation.conversation;
-					}
-				}
-				return null;
+		});
+		
+		// INT-LIST (list all interests)
+		//
+		// Add a command that will will list out the current user's
+		// interests in the user panel.
+		//
+		panel.register("int-list", new Panel.Command() {
+			@Override
+			public void invoke(List<String> args) {
+				System.out.println(user.user.interests);
 			}
 		});
 
@@ -524,6 +515,26 @@ public final class Chat {
 		// Now that the panel has all its commands registered, return the panel
 		// so that it can be used.
 		return panel;
+	}
+	
+	//Find user object by name
+	private User findUser(UserContext user,String name) {
+		for (final UserContext userCon : user.users()) {
+			if (name.equals(userCon.user.name)) {
+				return userCon.user;
+			}
+		}
+		return null;
+	}
+
+	//Find conversation object by name
+	private ConversationHeader findConversation(UserContext user, String title) {
+		for (final ConversationContext conversation : user.conversations()) {
+			if (title.equals(conversation.conversation.title)) {
+				return conversation.conversation;
+			}
+		}
+		return null;
 	}
 
 	private Panel createConversationPanel(final ConversationContext conversation) {
