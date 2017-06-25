@@ -137,8 +137,8 @@ public final class Chat {
           System.out.format("ERROR: Server not responsive");
         } else {
           System.out.println("Server up at: " + info.startTime);
-          System.out.println("Running Duration: " + info.upTimeInSec() + " seconds");
-          System.out.println("Server version:" + info.version);
+          System.out.println("Running Duration: " + info.upTime());
+          System.out.println("Server version: " + info.version);
         }
       }
     });
