@@ -93,9 +93,9 @@ public final class Server {
 
 				controller.newUserInterest(interestName, user);
 
-				Serializers.INTEGER.write(out, NetworkCode.NEW_USER_INTEREST_RESPONSE);
-				Serializers.nullable(User.SERIALIZER).write(out, view.findUser(user));
-				Serializers.nullable(User.SERIALIZER).write(out, view.findUser(interestName));
+//				Serializers.INTEGER.write(out, NetworkCode.NEW_USER_INTEREST_RESPONSE);
+//				Serializers.nullable(User.SERIALIZER).write(out, view.findUser(user));
+//				Serializers.nullable(User.SERIALIZER).write(out, view.findUser(interestName));
 
 			}
 		});
@@ -109,10 +109,44 @@ public final class Server {
 				final String interestName = Serializers.STRING.read(in);
 
 				controller.newConversationInterest(interestName, user);
+//
+//				Serializers.INTEGER.write(out, NetworkCode.NEW_CONVERSATION_INTEREST_RESPONSE);
+//				Serializers.nullable(User.SERIALIZER).write(out, view.findUser(user));
+//				Serializers.nullable(ConversationHeader.SERIALIZER).write(out, view.findConversation(interestName));
 
-				Serializers.INTEGER.write(out, NetworkCode.NEW_USER_INTEREST_RESPONSE);
-				Serializers.nullable(User.SERIALIZER).write(out, view.findUser(user));
-				Serializers.nullable(ConversationHeader.SERIALIZER).write(out, view.findConversation(interestName));
+			}
+		});
+		
+		// remove user interest - a client wants to remove a user as an interest
+		this.commands.put(NetworkCode.REMOVE_USER_INTEREST_REQUEST, new Command(){
+
+			public void onMessage(InputStream in, OutputStream out) throws IOException {
+
+				final Uuid user = Uuid.SERIALIZER.read(in);
+				final String interestName = Serializers.STRING.read(in);
+
+				controller.removeUserInterest(interestName, user);
+//
+//				Serializers.INTEGER.write(out, NetworkCode.NEW_CONVERSATION_INTEREST_RESPONSE);
+//				Serializers.nullable(User.SERIALIZER).write(out, view.findUser(user));
+//				Serializers.nullable(ConversationHeader.SERIALIZER).write(out, view.findConversation(interestName));
+
+			}
+		});
+		
+		// remove conversation interest - a client wants to remove a conversation as an interest
+		this.commands.put(NetworkCode.REMOVE_CONVERSATION_INTEREST_REQUEST, new Command(){
+
+			public void onMessage(InputStream in, OutputStream out) throws IOException {
+
+				final Uuid user = Uuid.SERIALIZER.read(in);
+				final String interestName = Serializers.STRING.read(in);
+
+				controller.removeConversationInterest(interestName, user);
+//
+//				Serializers.INTEGER.write(out, NetworkCode.NEW_CONVERSATION_INTEREST_RESPONSE);
+//				Serializers.nullable(User.SERIALIZER).write(out, view.findUser(user));
+//				Serializers.nullable(ConversationHeader.SERIALIZER).write(out, view.findConversation(interestName));
 
 			}
 		});

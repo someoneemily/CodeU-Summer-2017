@@ -54,12 +54,20 @@ public interface BasicController {
   // NEW USER INTEREST
   //
   //  Add another user as an interest for the current user.
-  //  Also add current interested user to the set of interested users.
   void newUserInterest(String name, Uuid user);
   
   // NEW CONVERSATION INTEREST
   //
   //  Add a conversation as an interest for the current user.
-  //  Also add current interested user to the set of interested users.
   void newConversationInterest(String title, Uuid id);
+  
+  // REMOVE USER INTEREST
+  //
+  //  Remove another user as an interest for the current user.
+  void removeUserInterest(String name, Uuid user);
+  
+  // REMOVE CONVERSATION INTEREST
+  //
+  //  Remove a conversation as an interest for the current user.
+  void removeConversationInterest(String title, Uuid id);
 }

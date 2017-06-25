@@ -76,7 +76,19 @@ public final class UserContext {
   }
   
   public void addUserInterest(String name) {
-	  controller.newUserInterest(name,user.id);
+	  controller.newUserInterest(name, user.id);
+  }
+  
+  public void addConversationInterest(String title) {
+	  controller.newConversationInterest(title, user.id);
+  }
+  
+  public void removeUserInterest(String name) {
+	  controller.removeUserInterest(name, user.id);
+  }
+  
+  public void removeConversationInterest(String title) {
+	  controller.removeConversationInterest(title, user.id);
   }
 
 }

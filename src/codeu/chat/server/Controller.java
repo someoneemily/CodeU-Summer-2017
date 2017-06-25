@@ -146,21 +146,50 @@ public final class Controller implements RawController, BasicController {
   @Override
   public void newUserInterest(String name, Uuid id) {
 	  
-	  final User user = model.userById().first(id);
-	  user.interests.add(name);
-	  
 	  final User interest = model.userByText().first(name);
-	  interest.interestedUsers.add(user.id);
+	  interest.interestedUsers.add(id);
+	  
+	  LOG.info(
+	          "newUserInterest success (user.id=%s interest.name=%s)",
+	          id,
+	          name);
+
   }
   
   @Override
   public void newConversationInterest(String title, Uuid id) {
 	  
-	  final User user = model.userById().first(id);
-	  user.interests.add(title);
+	  final ConversationHeader interest = model.conversationByText().first(title);
+	  interest.interestedUsers.add(id);
+	  
+	  LOG.info(
+	          "newConversationInterest success (user.id=%s interest.title=%s)",
+	          id,
+	          title);
+  }
+  
+  @Override
+  public void removeUserInterest(String name, Uuid id) {
+	  
+	  final User interest = model.userByText().first(name);
+	  interest.interestedUsers.remove(id);
+	  
+	  LOG.info(
+	          "removeConversationInterest success (user.id=%s interest.title=%s)",
+	          id,
+	          name);
+  }
+  
+  @Override
+  public void removeConversationInterest(String title, Uuid id) {
 	  
 	  final ConversationHeader interest = model.conversationByText().first(title);
-	  interest.interestedUsers.add(user.id);
+	  interest.interestedUsers.remove(id);
+	  
+	  LOG.info(
+	          "removeConversationInterest success (user.id=%s interest.title=%s)",
+	          id,
+	          title);
   }
 
   private Uuid createId() {
