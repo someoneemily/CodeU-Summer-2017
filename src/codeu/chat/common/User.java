@@ -29,24 +29,18 @@ public final class User {
 
     @Override
     public void write(OutputStream out, User value) throws IOException {
-
       Uuid.SERIALIZER.write(out, value.id);
       Serializers.STRING.write(out, value.name);
       Time.SERIALIZER.write(out, value.creation);
-
     }
 
     @Override
     public User read(InputStream in) throws IOException {
-
-    	
-    	
       return new User(
-          Uuid.SERIALIZER.read(in),
-          Serializers.STRING.read(in),
-          Time.SERIALIZER.read(in)
+              Uuid.SERIALIZER.read(in),
+              Serializers.STRING.read(in),
+              Time.SERIALIZER.read(in)
       );
-
     }
   };
 
