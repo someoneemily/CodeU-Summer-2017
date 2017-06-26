@@ -26,7 +26,7 @@ public final class Time implements Comparable<Time> {
 
     @Override
     public void write(OutputStream out, Time value) throws IOException {
-      
+
       Serializers.LONG.write(out, value.inMs());
 
     }
@@ -40,7 +40,7 @@ public final class Time implements Comparable<Time> {
   };
 
   private static final SimpleDateFormat formatter =
-      new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss.SSS");
+          new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss.SSS");
 
   private final Date date;
 
