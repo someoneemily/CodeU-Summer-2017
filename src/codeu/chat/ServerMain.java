@@ -44,9 +44,9 @@ import codeu.chat.util.connections.ServerConnectionSource;
 
 final class ServerMain {
 
-	
+
   private static final Logger.Log LOG = Logger.newLog(ServerMain.class);
-  
+
 //This is the directory where it is safe to store data across runs
   // of the server.
   private static File persistentPath = null;
@@ -65,9 +65,9 @@ final class ServerMain {
     LOG.info("============================= START OF LOG =============================");
 
     Uuid id = null;
-    Secret secret = null;    
-    RemoteAddress relayAddress = null;    
-    
+    Secret secret = null;
+    RemoteAddress relayAddress = null;
+
     try {
       id = Uuid.parse(args[0]);
       secret = Secret.parse(args[1]);
@@ -79,13 +79,13 @@ final class ServerMain {
       System.exit(1);
     }
 
-    
+
     if (!persistentPath.isDirectory()) {
       LOG.error("%s does not exist", persistentPath);
-          
+
       System.exit(1);
     }
-    
+
     try (
         final ConnectionSource serverSource = ServerConnectionSource.forPort(port);
         final ConnectionSource relaySource = relayAddress == null ? null : new ClientConnectionSource(relayAddress.host, relayAddress.port)
@@ -110,22 +110,22 @@ final class ServerMain {
                         new NoOpRelay() :
                         new RemoteRelay(relaySource);
 
-    //name of persistentLog file   -- unique to port           
+    //name of persistentLog file   -- unique to port
     String persistentFileName = persistentPath + "//persistentLog" + port + ".txt";
-    
+
     final Server server = new Server(id, secret, relay, persistentFileName);
 
     LOG.info("Created server.");
-    
-    
-    
+
+
+
     //location where persistentLog will be written to
-    
-    
+
+
     //reads in the file
     File persistentFile = new File(persistentFileName);
     PersistentLog.read(persistentFile, server);
-    
+
     while (true) {
 
       try {

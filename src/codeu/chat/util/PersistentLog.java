@@ -13,79 +13,64 @@ import codeu.chat.server.Controller;
 import codeu.chat.server.Server;
 
 public class PersistentLog {
-	
-	
-	//queue where persistent log will be stored
-	  public static LinkedList<String> persistentQueue = new LinkedList<String>();
-	  
-	  //writer to write to file
-	  private static PrintWriter persistentDataWriter = null;
-	
-	//method to read from the file
-	public static void read(File persistentFile, Server server){
-		try{
-			
-			//reads from file if it hasn't been created yet
-			if(!persistentFile.createNewFile()){
-				BufferedReader reader = new BufferedReader(new FileReader(persistentFile));
-				
-				
-					String line;
-	    			while ((line = reader.readLine()) != null) {   
-	    				String[] command = line.split("\\s+",5);
-	    				
-	    				//checks each command and calls appropriate action 
-	    				switch(command[0]){
-						
-							//user should be added
-							case "U-ADD":
-							
-								server.addNewUser(command[1], command[2], command[3]);
-								break;
 
-							//conversation should be added
-							case "C-ADD":
+    //queue where persistent log will be stored
+    public static LinkedList<String> persistentQueue = new LinkedList<String>();
 
-								server.addNewConversation(command[1], command[2], command[3], command[4]);
-								break;
-						
-							//message should be added
-							case "M-ADD":
-								
-								server.addNewMessage(command[1], command[2], command[3], command[4],command[5]);
-								break;
-	    			}
-				}
-			
-		}
-		}catch (IOException e) {
-			
-			e.printStackTrace();
-		}  
+    //writer to write to file
+    private static PrintWriter persistentDataWriter = null; //todo: why is this static? Multiple servers etc..
 
-	    
-	}	    
+    //method to read from the file
+    public static void read(File persistentFile, Server server){
+        try{
+            //reads from file if it hasn't been created yet
+            if(!persistentFile.createNewFile()){
+                BufferedReader reader = new BufferedReader(new FileReader(persistentFile));
+                String line;
 
-	    
-	    
-	//adds command to queue
-	public static void writeQueue(String command){
-		persistentQueue.add(command);
-	}
-	
-	//writes the queue to the file
-	public static void writeFile(String persistentFile) throws IOException{
-		
-        
-        
-  	     persistentDataWriter = new PrintWriter(new FileWriter(persistentFile, true));           	  
-		  
-		  while (!PersistentLog.persistentQueue.isEmpty()) {
-			  String command = PersistentLog.persistentQueue.pop();
-			  persistentDataWriter.println(command);
-		  }
-		  
-		  persistentDataWriter.close();
-	}
+                while ((line = reader.readLine()) != null) {
+                    String[] command = line.split("\\s+");
+
+                    //checks each command and calls appropriate action
+                    switch(command[0]){
+                        //user should be added
+                        case "U-ADD":
+                            server.addNewUser(command[1], command[2], command[3]);
+                            break;
+
+                        //conversation should be added
+                        case "C-ADD":
+                            server.addNewConversation(command[1], command[2], command[3], command[4]);
+                            break;
+
+                        //message should be added
+                        case "M-ADD":
+                            server.addNewMessage(command[1], command[2], command[3], command[4],command[5]);
+                            break;
+                    }
+                }
+            }
+        }catch (IOException e) {
+            //todo: Log? Print something more information?
+            e.printStackTrace();
+        }
+    }
+
+    //adds command to queue
+    public static void writeQueue(String command){
+        persistentQueue.add(command);
+    }
+
+    //writes the queue to the file
+    public static void writeFile(String persistentFile) throws IOException{
+
+        persistentDataWriter = new PrintWriter(new FileWriter(persistentFile, true));
+
+        while (!PersistentLog.persistentQueue.isEmpty()) {
+            String command = PersistentLog.persistentQueue.pop();
+            persistentDataWriter.println(command);
+        }
+        persistentDataWriter.close();
+    }
 
 }
