@@ -15,6 +15,7 @@
 package codeu.chat.server;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 
 import codeu.chat.common.BasicController;
 import codeu.chat.common.ConversationHeader;
@@ -40,13 +41,24 @@ public final class Controller implements RawController, BasicController {
   }
 
   @Override
+  public LinkedHashSet<String> getChanges(Uuid u_id){
+      LOG.info("getting change in the server controller" + model.userById().first(u_id).interestChanges);
+      LinkedHashSet<String> changes = new LinkedHashSet<>();
+      for(String change:(LinkedHashSet<String>)model.userById().first(u_id).interestChanges){
+          changes.add(change);
+      }
+      model.userById().first(u_id).interestChanges.clear();
+      return changes;
+  }
+
+  @Override
   public Message newMessage(Uuid author, Uuid conversation, String body) {
     return newMessage(createId(), author, conversation, body, Time.now());
   }
 
   @Override
   public User newUser(String name) {
-    return newUser(createId(), name, Time.now());
+    return newUser(createId(), name, Time.now(), null, null);
   }
 
   @Override
@@ -94,19 +106,20 @@ public final class Controller implements RawController, BasicController {
       // Update the conversation to point to the new last message as it has changed.
 
       foundConversation.lastMessage = message.id;
+
     }
 
     return message;
   }
 
   @Override
-  public User newUser(Uuid id, String name, Time creationTime) {
+  public User newUser(Uuid id, String name, Time creationTime, Collection<String> interestChanges, Collection<String> interestedUsers) {
 
     User user = null;
 
     if (isIdFree(id)) {
 
-      user = new User(id, name, creationTime);
+      user = new User(id, name, creationTime, null, null);
       model.add(user);
 
       LOG.info(

@@ -16,6 +16,7 @@ package codeu.chat.client.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.*;
 
 import codeu.chat.common.BasicController;
 import codeu.chat.common.BasicView;
@@ -65,6 +66,10 @@ public final class UserContext {
     }
 
     return all;
+  }
+
+  public LinkedHashSet<String> getStatusUpdate(Uuid u_id){
+    return controller.getChanges(u_id);
   }
 
   public InterestInfo getInterestConversation(Uuid c_id, Uuid u_id){

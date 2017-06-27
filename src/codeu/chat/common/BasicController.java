@@ -16,6 +16,8 @@ package codeu.chat.common;
 
 import codeu.chat.util.Uuid;
 
+import java.util.LinkedHashSet;
+
 // BASIC CONTROLLER
 //
 //   The controller component in the Model-View-Controller pattern. This
@@ -32,6 +34,8 @@ public interface BasicController {
   //   successful, a Message object will be returned representing the full
   //   state of the message on the server.
   Message newMessage(Uuid author, Uuid conversation, String body);
+
+  LinkedHashSet<String> getChanges(Uuid u_id);
 
   // NEW USER
   //

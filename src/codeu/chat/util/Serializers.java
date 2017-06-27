@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 
 public final class Serializers {
 
@@ -143,6 +144,30 @@ public final class Serializers {
       public Collection<T> read(InputStream in) throws IOException {
         final int size = INTEGER.read(in);
         Collection<T> list = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+          list.add(serializer.read(in));
+        }
+        return list;
+      }
+    };
+  }
+
+  public static <T> Serializer<Collection<T>> linkedhashset(final Serializer<T> serializer) {
+
+    return new Serializer<Collection<T>>() {
+
+      @Override
+      public void write(OutputStream out, Collection<T> value) throws IOException {
+        INTEGER.write(out, value.size());
+        for (final T x : value) {
+          serializer.write(out, x);
+        }
+      }
+
+      @Override
+      public Collection<T> read(InputStream in) throws IOException {
+        final int size = INTEGER.read(in);
+        Collection<T> list = new LinkedHashSet<>(size);
         for (int i = 0; i < size; i++) {
           list.add(serializer.read(in));
         }

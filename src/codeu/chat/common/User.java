@@ -34,7 +34,8 @@ public final class User {
       Uuid.SERIALIZER.write(out, value.id);
       Serializers.STRING.write(out, value.name);
       Time.SERIALIZER.write(out, value.creation);
-
+      Serializers.linkedhashset(Serializers.STRING).write(out, value.interestChanges);
+      Serializers.linkedhashset(Uuid.SERIALIZER).write(out, value.interestedUsers);
     }
 
     @Override
@@ -43,7 +44,10 @@ public final class User {
       return new User(
           Uuid.SERIALIZER.read(in),
           Serializers.STRING.read(in),
-          Time.SERIALIZER.read(in)
+          Time.SERIALIZER.read(in),
+              Serializers.linkedhashset(Serializers.STRING).read(in),
+              Serializers.linkedhashset(Uuid.SERIALIZER).read(in)
+
       );
 
     }
@@ -52,15 +56,15 @@ public final class User {
   public final Uuid id;
   public final String name;
   public final Time creation;
-  public final LinkedHashSet<String> interestChanges;
-  public final HashSet<Uuid> interestedUsers;
+  public final Collection<String> interestChanges;
+  public final Collection<Uuid> interestedUsers;
 
-  public User(Uuid id, String name, Time creation) {
+  public User(Uuid id, String name, Time creation, Collection<String> interestChanges, Collection<Uuid> interestedUsers) {
 
     this.id = id;
     this.name = name;
     this.creation = creation;
     this.interestChanges = new LinkedHashSet<String>();
-    this.interestedUsers = new HashSet<Uuid>();
+    this.interestedUsers = new LinkedHashSet<Uuid>();
   }
 }

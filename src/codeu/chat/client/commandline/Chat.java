@@ -15,13 +15,7 @@
 package codeu.chat.client.commandline;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Stack;
+import java.util.*;
 
 import codeu.chat.client.core.Context;
 import codeu.chat.client.core.ConversationContext;
@@ -412,8 +406,11 @@ public final class Chat {
 		panel.register("status-update", new Panel.Command() {
 			@Override
 			public void invoke(List<String> args) {
+
+				LinkedHashSet<String> statusUpdate =  user.getStatusUpdate(user.user.id);
+
 				try {
-					for (String change : user.user.interestChanges) {
+					for (String change : statusUpdate) {
 						String[] changeComponent = change.split(" ");
 						Uuid c_id = Uuid.parse(changeComponent[1]);
 						Uuid u_id = null;
@@ -439,7 +436,6 @@ public final class Chat {
 						}
 
 					}
-					user.user.interestChanges.clear();
 				}catch (IOException e) {
 					LOG.error("ERROR: could not parse Uuid of status changes");
 					System.exit(1);

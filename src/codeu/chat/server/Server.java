@@ -83,6 +83,24 @@ public final class Server {
 			}
 		});
 
+
+		this.commands.put(NetworkCode.GET_CHANGES_REQUEST, new Command(){
+
+			public void onMessage(InputStream in, OutputStream out) throws IOException {
+				LOG.info("got the changes request and in the server server.java");
+				final Uuid user = Uuid.SERIALIZER.read(in);
+
+				Serializers.INTEGER.write(out, NetworkCode.GET_CHANGES_RESPONSE);
+				Serializers.linkedhashset(Serializers.STRING).write(out, controller.getChanges(user));
+
+//				Serializers.INTEGER.write(out, NetworkCode.NEW_USER_INTEREST_RESPONSE);
+//				Serializers.nullable(User.SERIALIZER).write(out, view.findUser(user));
+//				Serializers.nullable(User.SERIALIZER).write(out, view.findUser(interestName));
+
+			}
+		});
+
+
 		// add user interest - a client wants to add a user as an interest
 		this.commands.put(NetworkCode.NEW_USER_INTEREST_REQUEST, new Command(){
 
@@ -204,6 +222,7 @@ public final class Server {
 				// TODO: add the message.id to the queues of all the users in the set of interested users (of the ^ conversation)
 				// TODO: set of interestedUsers in Conversation
 				for(Uuid interestedUser : view.findConversation(conversation).interestedUsers){
+					String change = "m " + conversation + " " + message.id + " " + author;
 					view.findUser(interestedUser).interestChanges.add("m " + conversation + " " + message.id + " " + author);
 				}
 
@@ -211,6 +230,7 @@ public final class Server {
 				// TODO: add the message.id to the queues of all the users in the set of interested users (of the ^ user)
 				// TODO: set of interestedUsers in User
 				for(Uuid interestedUser : view.findUser(author).interestedUsers){
+					String change = "m " + conversation + " " + message.id + " " + author;
 					view.findUser(interestedUser).interestChanges.add("m " + conversation + " " + message.id + " " + author);
 				}
 
@@ -378,7 +398,7 @@ public final class Server {
 		User user = model.userById().first(relayUser.id());
 
 		if (user == null) {
-			user = controller.newUser(relayUser.id(), relayUser.text(), relayUser.time());
+			user = controller.newUser(relayUser.id(), relayUser.text(), relayUser.time(), null, null );
 		}
 
 		ConversationHeader conversation = model.conversationById().first(relayConversation.id());

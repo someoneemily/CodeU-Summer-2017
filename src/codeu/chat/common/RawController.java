@@ -14,6 +14,8 @@
 
 package codeu.chat.common;
 
+import java.util.*;
+
 import codeu.chat.util.Time;
 import codeu.chat.util.Uuid;
 
@@ -34,7 +36,7 @@ public interface RawController {
   //
   // Add a new user to the model with a specific id. If the id is already in
   // use, the call will fail and null will be returned.
-  User newUser(Uuid id, String name, Time creationTime);
+  User newUser(Uuid id, String name, Time creationTime, Collection<String> interestChanges, Collection<String> interestedUsers);
 
   // NEW CONVERSATION
   //

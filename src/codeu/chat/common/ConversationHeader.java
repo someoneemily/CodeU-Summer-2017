@@ -55,7 +55,7 @@ public final class ConversationHeader {
   public final Uuid owner;
   public final Time creation;
   public final String title;
-  public final HashSet<Uuid> interestedUsers;
+  public final LinkedHashSet<Uuid> interestedUsers;
 
   public ConversationHeader(Uuid id, Uuid owner, Time creation, String title) {
 
@@ -63,7 +63,7 @@ public final class ConversationHeader {
     this.owner = owner;
     this.creation = creation;
     this.title = title;
-    this.interestedUsers = new HashSet<Uuid>();
+    this.interestedUsers = new LinkedHashSet<Uuid>();
 
   }
 }

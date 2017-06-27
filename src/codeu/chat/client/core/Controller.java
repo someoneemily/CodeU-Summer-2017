@@ -17,6 +17,7 @@ package codeu.chat.client.core;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.Thread;
+import java.util.*;
 
 import codeu.chat.common.BasicController;
 import codeu.chat.common.ConversationHeader;
@@ -38,6 +39,31 @@ final class Controller implements BasicController {
 
 	public Controller(ConnectionSource source) {
 		this.source = source;
+	}
+
+	@Override
+	public LinkedHashSet<String> getChanges(Uuid user) {
+
+		LinkedHashSet<String> response = null;
+
+		try (final Connection connection = source.connect()) {
+
+			Serializers.INTEGER.write(connection.out(), NetworkCode.GET_CHANGES_REQUEST);
+			Uuid.SERIALIZER.write(connection.out(), user);
+
+			if (Serializers.INTEGER.read(connection.in()) == NetworkCode.GET_CHANGES_RESPONSE) {
+
+				response = (LinkedHashSet<String>)Serializers.linkedhashset(Serializers.STRING).read(connection.in());
+				LOG.info("status-update getChanges: Response completed.");
+			} else {
+				LOG.error("Response from server failed.");
+			}
+		} catch (Exception ex) {
+			System.out.println("ERROR: Exception during call on server for status-update changes. Check log for details.");
+			LOG.error(ex, "Exception during call on server.");
+		}
+
+		return response;
 	}
 
 	@Override
