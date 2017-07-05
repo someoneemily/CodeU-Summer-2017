@@ -32,7 +32,7 @@ public class PersistentLog {
 				
 					String line;
 	    			while ((line = reader.readLine()) != null) {   
-	    				String[] command = line.split("\\s+");
+	    				String[] command = line.split("\\s+",5);
 	    				
 	    				//checks each command and calls appropriate action 
 	    				switch(command[0]){

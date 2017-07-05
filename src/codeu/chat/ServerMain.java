@@ -65,12 +65,8 @@ final class ServerMain {
     LOG.info("============================= START OF LOG =============================");
 
     Uuid id = null;
-    Secret secret = null;
-    
-    
-    
-    RemoteAddress relayAddress = null;
-    
+    Secret secret = null;    
+    RemoteAddress relayAddress = null;    
     
     try {
       id = Uuid.parse(args[0]);
@@ -90,10 +86,6 @@ final class ServerMain {
       System.exit(1);
     }
     
-    
-      
-   
-
     try (
         final ConnectionSource serverSource = ServerConnectionSource.forPort(port);
         final ConnectionSource relaySource = relayAddress == null ? null : new ClientConnectionSource(relayAddress.host, relayAddress.port)
@@ -133,11 +125,6 @@ final class ServerMain {
     //reads in the file
     File persistentFile = new File(persistentFileName);
     PersistentLog.read(persistentFile, server);
-      
-    
-    
-    
-    
     
     while (true) {
 

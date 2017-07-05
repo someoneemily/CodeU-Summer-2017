@@ -359,7 +359,7 @@ public void addNewUser(String id, String name, String time){
   }
     
     //adds new message to conversation
-    public void addNewMessage(String messageIdString, String userIdString, String convoIdString, String content, String timeString){
+    public void addNewMessage(String messageIdString, String userIdString, String convoIdString, String timeString, String content){
     	
     	//converts strings
     	Uuid messageId;
