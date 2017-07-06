@@ -116,8 +116,8 @@ private static final long LOG_REFRESH_MS = 20000;
          			message.id.toString() + " " + 
          			author.toString() + " " +
          			conversation.toString() + " " +
-         			content + " " +
-         			message.creation.inMs();        	
+         			message.creation.inMs() + " " +
+         			content;     
 
             //add command to queue
             PersistentLog.writeQueue(messageAddCommand);
