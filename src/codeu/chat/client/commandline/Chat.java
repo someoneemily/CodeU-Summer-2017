@@ -16,7 +16,6 @@ package codeu.chat.client.commandline;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +57,7 @@ public final class Chat {
     final List<String> args = new ArrayList<>();
     final Tokenizer tokenizer = new Tokenizer(line);
     for (String token = tokenizer.next(); token != null; token = tokenizer.next()) {
-    	args.add(token);
+      args.add(token);
     }
     final String command = args.get(0);
     args.remove(0);
@@ -124,8 +123,8 @@ public final class Chat {
         System.out.println("  exit");
         System.out.println("    Exit the program.");
       }
-    }); 
-    
+    });
+
     // info
     //
     //Add a command to return the amount of time the server has been running
@@ -133,7 +132,7 @@ public final class Chat {
     //
     panel.register("info", new Panel.Command() {
       @Override
-      public void invoke(Scanner args) {
+      public void invoke(List<String> args) {
         final ServerInfo info = context.getInfo();
         if (info == null) {
           System.out.format("ERROR: Server not responsive");
@@ -152,12 +151,12 @@ public final class Chat {
     //
     panel.register("u-list", new Panel.Command() {
       @Override
-      public void invoke(Scanner args) {
+      public void invoke(List<String> args) {
         for (final UserContext user : context.allUsers()) {
           System.out.format(
-              "USER %s (UUID:%s)\n",
-              user.user.name,
-              user.user.id);
+                  "USER %s (UUID:%s)\n",
+                  user.user.name,
+                  user.user.id);
         }
       }
     });
@@ -258,9 +257,9 @@ public final class Chat {
       public void invoke(List<String> args) {
         for (final ConversationContext conversation : user.conversations()) {
           System.out.format(
-              "CONVERSATION %s (UUID:%s)\n",
-              conversation.conversation.title,
-              conversation.conversation.id);
+                  "CONVERSATION %s (UUID:%s)\n",
+                  conversation.conversation.title,
+                  conversation.conversation.id);
         }
       }
     });
@@ -295,7 +294,7 @@ public final class Chat {
     panel.register("c-join", new Panel.Command() {
       @Override
       public void invoke(List<String> args) {
-    	Iterator<String> itr = args.iterator();
+        Iterator<String> itr = args.iterator();
         final String name = itr.hasNext() ? itr.next().trim() : "";
         if (name.length() > 0) {
           final ConversationContext conversation = find(name);
@@ -376,8 +375,8 @@ public final class Chat {
       public void invoke(List<String> args) {
         System.out.println("--- start of conversation ---");
         for (MessageContext message = conversation.firstMessage();
-                            message != null;
-                            message = message.next()) {
+             message != null;
+             message = message.next()) {
           System.out.println();
           System.out.format("USER : %s\n", message.message.author);
           System.out.format("SENT : %s\n", message.message.creation);
@@ -397,7 +396,7 @@ public final class Chat {
     panel.register("m-add", new Panel.Command() {
       @Override
       public void invoke(List<String> args) {
-    	Iterator<String> itr = args.iterator();
+        Iterator<String> itr = args.iterator();
         final String message = itr.hasNext() ? itr.next().trim() : "";
         if (message.length() > 0) {
           conversation.add(message);
