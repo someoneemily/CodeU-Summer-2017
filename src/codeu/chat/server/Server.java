@@ -361,6 +361,13 @@ public void addNewUser(String id, String name, String time){
     //adds new message to conversation
     public void addNewMessage(String messageIdString, String userIdString, String convoIdString, String timeString, String content){
     	
+    	LOG.info("import message (messageId=%s userId=%s convoId=%s time=%s message=%s)",
+    	          messageIdString,
+    	          userIdString,
+    	          convoIdString,
+    	          timeString,
+    	          content);
+    	
     	//converts strings
     	Uuid messageId;
     	Uuid userId;

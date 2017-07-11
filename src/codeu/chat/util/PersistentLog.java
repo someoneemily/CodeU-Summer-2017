@@ -32,7 +32,7 @@ public class PersistentLog {
 				
 					String line;
 	    			while ((line = reader.readLine()) != null) {   
-	    				String[] command = line.split("\\s+",5);
+	    				String[] command = line.split("\\s+",6);
 	    				
 	    				//checks each command and calls appropriate action 
 	    				switch(command[0]){
@@ -51,7 +51,6 @@ public class PersistentLog {
 						
 							//message should be added
 							case "M-ADD":
-								
 								server.addNewMessage(command[1], command[2], command[3], command[4],command[5]);
 								break;
 	    			}
