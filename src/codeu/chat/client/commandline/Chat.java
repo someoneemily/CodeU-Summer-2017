@@ -399,7 +399,10 @@ public final class Chat {
 					@Override
 					public void invoke(List<String> args) {
 						Iterator<String> itr = args.iterator();
-						final String message = itr.hasNext() ? itr.next().trim() : "";
+						String message = "";
+						while (itr.hasNext()) {
+							message += (" " + itr.next().trim());
+						}
 						if (message.length() > 0) {
 							conversation.add(message);
 						} else {
