@@ -150,8 +150,8 @@ private static final long LOG_REFRESH_MS = 20000;
         if(user != null){
         	String userAddCommand = "U-ADD "
                  + user.id.toString() + " "
-                 + user.name + " "
-                 + user.creation.inMs();
+                 + user.creation.inMs() + " "
+                 + user.name;
             
 
             //add command to queue
@@ -319,7 +319,7 @@ private static final long LOG_REFRESH_MS = 20000;
   
 
 //adds new user at the start
-public void addNewUser(String id, String name, String time){
+public void addNewUser(String id, String time, String name){
 	  
 	  //converts strings to necessary objects
 	  Uuid userid;

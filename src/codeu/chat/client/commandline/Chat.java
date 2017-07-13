@@ -172,7 +172,11 @@ public final class Chat {
 			@Override
 			public void invoke(List<String> args) {
 				Iterator<String> itr = args.iterator();
-				final String name = itr.hasNext() ? itr.next().trim() : "";
+				String userName = "";
+				while (itr.hasNext()) {
+					userName += (itr.next().trim() + " ");
+				}
+				final String name = userName.trim();
 				if (name.length() > 0) {
 					if (context.create(name) == null) {
 						System.out.println("ERROR: Failed to create new user");
@@ -192,7 +196,11 @@ public final class Chat {
 			@Override
 			public void invoke(List<String> args) {
 				Iterator<String> itr = args.iterator();
-				final String name = itr.hasNext() ? itr.next().trim() : "";
+				String userName = "";
+				while (itr.hasNext()) {
+					userName += (itr.next().trim() + " ");
+				}
+				final String name = userName.trim();
 				if (name.length() > 0) {
 					final UserContext user = findUser(name);
 					if (user == null) {
@@ -274,7 +282,12 @@ public final class Chat {
 				panel.register("c-add", new Panel.Command() {
 					@Override
 					public void invoke(List<String> args) {
-						final String name = (args.iterator()).hasNext() ? (args.iterator()).next().trim() : "";
+						Iterator<String> itr = args.iterator();
+						String conversationName = "";
+						while (itr.hasNext()) {
+							conversationName += (itr.next().trim() + " ");
+						}
+						final String name = conversationName.trim();
 						if (name.length() > 0) {
 							final ConversationContext conversation = user.start(name);
 							if (conversation == null) {
@@ -297,7 +310,11 @@ public final class Chat {
 					@Override
 					public void invoke(List<String> args) {
 						Iterator<String> itr = args.iterator();
-						final String name = itr.hasNext() ? itr.next().trim() : "";
+						String conversationName = "";
+						while (itr.hasNext()) {
+							conversationName += (itr.next().trim() + " ");
+						}
+						final String name = conversationName.trim();
 						if (name.length() > 0) {
 							final ConversationContext conversation = find(name);
 							if (conversation == null) {

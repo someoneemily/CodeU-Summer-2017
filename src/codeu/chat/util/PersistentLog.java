@@ -32,25 +32,29 @@ public class PersistentLog {
 				
 					String line;
 	    			while ((line = reader.readLine()) != null) {   
-	    				String[] command = line.split("\\s+",6);
+	    				String[] command = line.split("\\s+");
 	    				
 	    				//checks each command and calls appropriate action 
 	    				switch(command[0]){
 						
 							//user should be added
 							case "U-ADD":
-							
+								command = line.split("\\s+",4);
+								
 								server.addNewUser(command[1], command[2], command[3]);
 								break;
 
 							//conversation should be added
 							case "C-ADD":
-
+								command = line.split("\\s+",5);
+								
 								server.addNewConversation(command[1], command[2], command[3], command[4]);
 								break;
 						
 							//message should be added
 							case "M-ADD":
+								command = line.split("\\s+",6);
+								
 								server.addNewMessage(command[1], command[2], command[3], command[4],command[5]);
 								break;
 	    			}
