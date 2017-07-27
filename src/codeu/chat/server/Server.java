@@ -39,12 +39,7 @@ import codeu.chat.common.Relay;
 import codeu.chat.common.Secret;
 import codeu.chat.common.ServerInfo;
 import codeu.chat.common.User;
-import codeu.chat.util.Logger;
-import codeu.chat.util.PersistentLog;
-import codeu.chat.util.Serializers;
-import codeu.chat.util.Time;
-import codeu.chat.util.Timeline;
-import codeu.chat.util.Uuid;
+import codeu.chat.util.*;
 import codeu.chat.util.connections.Connection;
 
 public final class Server {
@@ -178,7 +173,8 @@ private static final long LOG_REFRESH_MS = 20000;
 
         final String title = Serializers.STRING.read(in);
         final Uuid owner = Uuid.SERIALIZER.read(in);
-        final ConversationHeader conversation = controller.newConversation(title, owner);
+        final String default_control = Serializers.STRING.read(in);
+        final ConversationHeader conversation = controller.newConversation(title, owner, default_control);
 
         if(conversation != null){
           String conversationAddCommand = "C-ADD "
@@ -338,7 +334,7 @@ public void addNewUser(String id, String time, String name){
 }
 
 //adds new conversation at the start
-  public void addNewConversation(String c_id, String c_owner, String creation, String title){
+  public void addNewConversation(String c_id, String c_owner, String creation, String title, String default_control){
 
     //converts strings to necessary objects
     Uuid id;
@@ -349,7 +345,7 @@ public void addNewUser(String id, String time, String name){
       Time creationTime = Time.fromMs(Long.parseLong(creation));
 
       //adds conversation
-      controller.newConversation(id, title, owner, creationTime);
+      controller.newConversation(id, title, owner, creationTime, default_control);
     } catch (IOException e) {
 
       LOG.info("Could not read in conversation from persistent log");
@@ -448,7 +444,8 @@ public void addNewUser(String id, String time, String name){
       conversation = controller.newConversation(relayConversation.id(),
                                                 relayConversation.text(),
                                                 user.id,
-                                                relayConversation.time());
+                                                relayConversation.time(), "1");
+      // setting default control to 1 (member) for all conversation from bundle : TODO change if necessary
     }
 
     Message message = model.messageById().first(relayMessage.id());

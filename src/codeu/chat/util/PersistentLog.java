@@ -40,7 +40,9 @@ public class PersistentLog {
 
                         //conversation should be added
                         case "C-ADD":
-                            server.addNewConversation(command[1], command[2], command[3], command[4]);
+                            // TODO: change the default value to be one from the persistent log
+                            // maybe use tokenizer to read in input as well to group the quoted material
+                            server.addNewConversation(command[1], command[2], command[3], command[4], "1");
                             break;
 
                         //message should be added

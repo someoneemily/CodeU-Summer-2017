@@ -62,7 +62,6 @@ public final class Chat {
         }
         final String command = args.get(0);
         args.remove(0);
-
         // Because "exit" and "back" are applicable to every panel, handle
         // those commands here to avoid having to implement them for each
         // panel.
@@ -243,7 +242,7 @@ public final class Chat {
                 System.out.println("USER MODE");
                 System.out.println("  c-list");
                 System.out.println("    List all conversations that the current user can interact with.");
-                System.out.println("  c-add <title>");
+                System.out.println("  c-add \"<title>\" <default access control (1=open, 0=private)>");
                 System.out.println("    Add a new conversation with the given title and join it as the current user.");
                 System.out.println("  c-join <title>");
                 System.out.println("    Join the conversation as the current user.");
@@ -283,19 +282,25 @@ public final class Chat {
             public void invoke(List<String> args) {
                 Iterator<String> itr = args.iterator();
                 String conversationName = "";
+                String default_control = "";
                 while (itr.hasNext()) {
-                    conversationName += (itr.next().trim() + " ");
+                    String current = itr.next();
+                    if(itr.hasNext()){
+                        conversationName += (current.trim() + " ");
+                    }else{
+                        default_control = current.trim();
+                    }
                 }
                 final String name = conversationName.trim();
                 if (name.length() > 0) {
-                    final ConversationContext conversation = user.start(name);
+                    final ConversationContext conversation = user.start(name, default_control);
                     if (conversation == null) {
                         System.out.println("ERROR: Failed to create new conversation");
                     } else {
                         panels.push(createConversationPanel(conversation));
                     }
                 } else {
-                    System.out.println("ERROR: Missing <title>");
+                    System.out.println("ERROR: Missing <title> or missing default access control string");
                 }
             }
         });

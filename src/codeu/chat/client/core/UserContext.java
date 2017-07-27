@@ -35,8 +35,8 @@ public final class UserContext {
     this.controller = controller;
   }
 
-  public ConversationContext start(String name) {
-    final ConversationHeader conversation = controller.newConversation(name, user.id);
+  public ConversationContext start(String name, String default_control) {
+    final ConversationHeader conversation = controller.newConversation(name, user.id, default_control);
     return conversation == null ?
         null :
         new ConversationContext(user, conversation, view, controller);

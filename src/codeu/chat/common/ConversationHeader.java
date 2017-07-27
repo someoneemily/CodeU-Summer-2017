@@ -34,6 +34,7 @@ public final class ConversationHeader {
       Uuid.SERIALIZER.write(out, value.owner);
       Time.SERIALIZER.write(out, value.creation);
       Serializers.STRING.write(out, value.title);
+      Serializers.STRING.write(out, "" + value.default_control);
 
     }
 
@@ -44,7 +45,8 @@ public final class ConversationHeader {
           Uuid.SERIALIZER.read(in),
           Uuid.SERIALIZER.read(in),
           Time.SERIALIZER.read(in),
-          Serializers.STRING.read(in)
+          Serializers.STRING.read(in),
+             Serializers.STRING.read(in)
       );
 
     }
@@ -54,13 +56,15 @@ public final class ConversationHeader {
   public final Uuid owner;
   public final Time creation;
   public final String title;
+  public final byte default_control;
 
-  public ConversationHeader(Uuid id, Uuid owner, Time creation, String title) {
+  public ConversationHeader(Uuid id, Uuid owner, Time creation, String title, String default_control) {
 
     this.id = id;
     this.owner = owner;
     this.creation = creation;
     this.title = title;
+    this.default_control = Byte.parseByte(default_control);
 
   }
 }
