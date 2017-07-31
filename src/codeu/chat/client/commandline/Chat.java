@@ -323,7 +323,11 @@ public final class Chat {
                     final ConversationContext conversation = find(name);
                     if (conversation == null) {
                         System.out.format("ERROR: No conversation with name '%s'\n", name);
-                    } else {
+                    }
+                    else if (!conversation.conversation.isRemoved(user.user.id) && conversation.conversation.default_control != 0){
+                    	System.out.format("Not allowed to join");
+                    }
+                    else {
                         panels.push(createConversationPanel(conversation));
                     }
                 } else {
