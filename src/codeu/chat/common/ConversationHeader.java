@@ -75,4 +75,57 @@ public final class ConversationHeader {
   public void setCreator(Uuid creator){
     ac_list.put(creator, (byte)3);
   }
+  
+  public boolean isMember(Uuid user){
+	  Byte id = ac_list.get(user);
+	  
+	  if(id == null){
+		  return this.default_control >= 1;
+	  }
+	  else{
+		  return id >= 1;
+	  }
+	  
+	  
+  }
+  
+  public boolean isOwner(Uuid user){
+	  Byte id = ac_list.get(user);
+	  
+	  if(id == null){
+		  return this.default_control >= 2;
+	  }
+	  else{
+		  return id >= 2;
+	  }
+	  
+  }
+  
+  public boolean isCreator(Uuid user){
+	  Byte id = ac_list.get(user);
+	  
+	  if(id == null){
+		  return this.default_control == 3;
+	  }
+	  else{
+		  return id == 3;
+	  }
+	  
+  }
+  
+  public boolean isRemoved(Uuid user){
+	  Byte id = ac_list.get(user);
+	  
+	  if(id == null){
+		  return this.default_control == 0;
+	  }
+	  else{
+		  return id == 0;
+	  }
+	  
+  }
+  
+  
 }
+
+
