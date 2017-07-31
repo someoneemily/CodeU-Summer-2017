@@ -400,18 +400,23 @@ public final class Chat {
         panel.register("m-list", new Panel.Command() {
             @Override
             public void invoke(List<String> args) {
-                System.out.println("--- start of conversation ---");
-                for (MessageContext message = conversation.firstMessage();
-                     message != null;
-                     message = message.next()) {
-                    System.out.println();
-                    System.out.format("USER : %s\n", message.message.author);
-                    System.out.format("SENT : %s\n", message.message.creation);
-                    System.out.println();
-                    System.out.println(message.message.content);
-                    System.out.println();
-                }
-                System.out.println("---  end of conversation  ---");
+            	if(conversation.conversation.isMember(conversation.user.id)){
+            		System.out.println("--- start of conversation ---");
+            		for (MessageContext message = conversation.firstMessage();
+            				message != null;
+            				message = message.next()) {
+            			System.out.println();
+            			System.out.format("USER : %s\n", message.message.author);
+            			System.out.format("SENT : %s\n", message.message.creation);
+            			System.out.println();
+            			System.out.println(message.message.content);
+            			System.out.println();
+            		}
+            		System.out.println("---  end of conversation  ---");
+            	}
+            	else{
+            		System.out.println("Denied access");
+            	}
             }
         });
 
@@ -423,16 +428,21 @@ public final class Chat {
         panel.register("m-add", new Panel.Command() {
             @Override
             public void invoke(List<String> args) {
-                Iterator<String> itr = args.iterator();
-                String message = "";
-                while (itr.hasNext()) {
-                    message += (" " + itr.next().trim());
-                }
-                if (message.length() > 0) {
-                    conversation.add(message);
-                } else {
-                    System.out.println("ERROR: Messages must contain text");
-                }
+            	if(conversation.conversation.isMember(conversation.user.id)){
+            		Iterator<String> itr = args.iterator();
+            		String message = "";
+            		while (itr.hasNext()) {
+            			message += (" " + itr.next().trim());
+            		}
+            		if (message.length() > 0) {
+            			conversation.add(message);
+            		} else {
+            			System.out.println("ERROR: Messages must contain text");
+            		}
+            	}
+            	else{
+            		System.out.println("Denied access");
+            	}
             }
         });
 
