@@ -88,4 +88,12 @@ public final class ConversationContext {
     final Iterator<Message> messages = view.getMessages(Arrays.asList(id)).iterator();
     return messages.hasNext() ? new MessageContext(messages.next(), view) : null;
   }
+  
+  public Uuid findUser(String name) {
+	  Uuid uuid = null;
+	  final Iterator<Message> messages = view.getMessages(Arrays.asList(id)).iterator();
+	  
+	  
+	  return uuid;
+  }
 }
