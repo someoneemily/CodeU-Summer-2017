@@ -249,6 +249,21 @@ private static final long LOG_REFRESH_MS = 20000;
         Serializers.collection(Message.SERIALIZER).write(out, messages);
       }
     });
+
+    // Change the default access control of the conversation
+    this.commands.put(NetworkCode.CHANGE_DEFAULT_REQUEST, new Command() {
+      @Override
+      public void onMessage(InputStream in, OutputStream out) throws IOException {
+
+        final Uuid conversation = Uuid.SERIALIZER.read(in);
+        final String default_control = Serializers.STRING.read(in);
+
+        controller.changeDefault(conversation, default_control);
+
+        Serializers.INTEGER.write(out, NetworkCode.CHANGE_DEFAULT_RESPONSE);
+
+      }
+    });
     
     this.timeline.scheduleNow(new Runnable() {
         @Override

@@ -143,6 +143,15 @@ public final class Controller implements RawController, BasicController {
     return conversation;
   }
 
+  @Override
+  public void changeDefault(Uuid conversation_id, String default_control){
+
+    model.conversationById().first(conversation_id).setDefaultControl(default_control);
+
+    LOG.info("Conversation default access control is changed to " + default_control);
+
+  }
+
   private Uuid createId() {
 
     Uuid candidate;

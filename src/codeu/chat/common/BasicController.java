@@ -51,4 +51,8 @@ public interface BasicController {
   //  Whether conversations can have the same title is undefined.
   ConversationHeader newConversation(String title, Uuid owner, String default_control);
 
+  // Change Default Access Control
+  //
+  void changeDefault(Uuid conversation, String default_control);
+
 }

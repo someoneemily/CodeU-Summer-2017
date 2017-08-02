@@ -385,6 +385,8 @@ public final class Chat {
                 System.out.println("    List all messages in the current conversation.");
                 System.out.println("  m-add <message>");
                 System.out.println("    Add a new message to the current conversation as the current user.");
+                System.out.println("  change-default <default control>");
+                System.out.println("    Changes the default access permissions of the current conversation as the creator.");
                 System.out.println("  info");
                 System.out.println("    Display all info about the current conversation.");
                 System.out.println("  back");
@@ -448,6 +450,29 @@ public final class Chat {
             }
         });
 
+        // change-default (changes default access permissions)
+        //
+        // For the creator of the conversation
+        // this option allows a change in the default access permissions of the conversation
+        //
+        panel.register("change-default", new Panel.Command() {
+            @Override
+            public void invoke(List<String> args) {
+                if(conversation.conversation.isCreator(conversation.user.id)){
+                    Iterator<String> itr = args.iterator();
+                    String default_control = itr.next().trim();
+                    if (default_control.length() > 0) {
+                        conversation.changeDefault(default_control);
+                    } else {
+                        System.out.println("ERROR: default control byte must be specified");
+                    }
+                }
+                else{
+                    System.out.println("Denied access");
+                }
+            }
+        });
+
         // INFO
         //
         // Add a command to print info about the current conversation when the user
@@ -460,6 +485,7 @@ public final class Chat {
                 System.out.format("  Title : %s\n", conversation.conversation.title);
                 System.out.format("  Id    : UUID:%s\n", conversation.conversation.id);
                 System.out.format("  Owner : %s\n", conversation.conversation.owner);
+                System.out.format("  Default-access: %s\n", conversation.conversation.default_control==0 ? "private": "public");
             }
         });
 

@@ -78,6 +78,12 @@ public final class ConversationContext {
         getMessage(updated.lastMessage);
   }
 
+  public void changeDefault(String default_control){
+
+    // passes along default access control byte as string
+    controller.changeDefault(conversation.id, default_control);
+  }
+
   private ConversationPayload getUpdated() {
     final Collection<Uuid> ids = Arrays.asList(conversation.id);
     final Iterator<ConversationPayload> payloads = view.getConversationPayloads(ids).iterator();

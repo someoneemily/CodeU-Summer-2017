@@ -42,4 +42,8 @@ public interface RawController {
   // already in use, the call will fail and null will be returned.
   ConversationHeader newConversation(Uuid id, String title, Uuid owner, Time creationTime, String default_control);
 
+  // Change Conversation default access control
+  //
+  void changeDefault(Uuid conversation, String default_control);
+
 }

@@ -57,7 +57,7 @@ public final class ConversationHeader {
   public final Uuid owner;
   public final Time creation;
   public final String title;
-  public final byte default_control;
+  public byte default_control;
   public final HashMap<Uuid, Byte> ac_list;
 
   public ConversationHeader(Uuid id, Uuid owner, Time creation, String title, String default_control) {
@@ -75,6 +75,8 @@ public final class ConversationHeader {
   public void setCreator(Uuid creator){
     ac_list.put(creator, (byte)3);
   }
+
+  public void setDefaultControl(String defaultControl){ default_control = Byte.parseByte(defaultControl); }
   
   public boolean isMember(Uuid user){
 	  Byte id = ac_list.get(user);
