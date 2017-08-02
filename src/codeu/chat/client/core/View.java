@@ -159,5 +159,25 @@ final class View implements BasicView {
     }
     return null;
   }
+  
+  public Uuid findUserID(String username) {
+	  try (final Connection connection = source.connect()) {
+
+	      Serializers.INTEGER.write(connection.out(), NetworkCode.FIND_USER_REQUEST);
+	      Serializers.STRING.write(connection.out(), username);
+	      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.FIND_USER_RESPONSE) {
+	    	  final Uuid user = Uuid.SERIALIZER.read(connection.in());
+
+	          return user;
+	      } else {
+	        LOG.error("Server did not respond with type of response expected");
+	      }
+	    } catch (Exception ex) {
+
+	      System.out.println("ERROR: Exception during connection call on server. Check log for details.");
+	      LOG.error(ex, "Exception during call on server.");
+	    }
+	    return null;
+  }
 
 }

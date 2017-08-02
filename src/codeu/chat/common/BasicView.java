@@ -56,5 +56,10 @@ public interface BasicView {
   //
   // returns ServerInfo with the correct startTime and version instantiated
   ServerInfo getInfo();
+  
+  // FIND USER
+  //
+  // Find a user's uuid given their name.
+  Uuid findUserID(String username);
 
 }

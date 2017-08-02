@@ -37,5 +37,7 @@ public final class NetworkCode {
       RELAY_WRITE_REQUEST = 29,
       RELAY_WRITE_RESPONSE = 30,
       SERVER_INFO_REQUEST = 31,
-      SERVER_INFO_RESPONSE = 32;
+      SERVER_INFO_RESPONSE = 32,
+      FIND_USER_REQUEST = 33,
+      FIND_USER_RESPONSE = 34;
 }

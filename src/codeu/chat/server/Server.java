@@ -158,9 +158,6 @@ private static final long LOG_REFRESH_MS = 20000;
         	LOG.info("unable to create user " + name);
         }
         
-        
-        
-
         Serializers.INTEGER.write(out, NetworkCode.NEW_USER_RESPONSE);
         Serializers.nullable(User.SERIALIZER).write(out, user);
       }
@@ -197,6 +194,19 @@ private static final long LOG_REFRESH_MS = 20000;
       }
     });
 
+    // Find User - A client wants to find the Uuid of one user.
+    this.commands.put(NetworkCode.FIND_USER_REQUEST, new Command() {
+      @Override
+      public void onMessage(InputStream in, OutputStream out) throws IOException {
+    	  
+    	final String username = Serializers.STRING.read(in);
+
+        Serializers.INTEGER.write(out, NetworkCode.FIND_USER_RESPONSE);
+        Uuid.SERIALIZER.write(out, view.findUserID(username));
+        
+      }
+    });
+    
     // Get Users - A client wants to get all the users from the back end.
     this.commands.put(NetworkCode.GET_USERS_REQUEST, new Command() {
       @Override

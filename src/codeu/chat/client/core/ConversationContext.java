@@ -90,10 +90,7 @@ public final class ConversationContext {
   }
   
   public Uuid findUser(String name) {
-	  Uuid uuid = null;
-	  final Iterator<Message> messages = view.getMessages(Arrays.asList(id)).iterator();
-	  
-	  
+	  Uuid uuid = view.findUserID(name);
 	  return uuid;
   }
 }
