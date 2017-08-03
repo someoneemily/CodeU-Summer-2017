@@ -269,9 +269,19 @@ private static final long LOG_REFRESH_MS = 20000;
     	final String user = Serializers.STRING.read(in);
     	final Uuid conversation = Uuid.SERIALIZER.read(in);
     	final String byte_val = Serializers.STRING.read(in);
-    	
+
     	controller.changeAccess(user, conversation, byte_val);
-    	
+
+        //writes changes to a person's access control to a conversation
+        //recorded as "change-access <user id> <conversation id> <byte_control>"
+        String userAddCommand = "change-access "
+                + view.findUserID(user) + " "
+                + conversation + " "
+                + byte_val;
+
+        //add command to queue
+        PersistentLog.writeQueue(userAddCommand);
+
     	Serializers.INTEGER.write(out, NetworkCode.CHANGE_ACCESS_RESPONSE);  
       }
     });
