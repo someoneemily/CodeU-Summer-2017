@@ -14,65 +14,71 @@ import codeu.chat.server.Server;
 
 public class PersistentLog {
 
-    //queue where persistent log will be stored
-    public static LinkedList<String> persistentQueue = new LinkedList<String>();
+	//queue where persistent log will be stored
+	public static LinkedList<String> persistentQueue = new LinkedList<String>();
 
-    //writer to write to file
-    private static PrintWriter persistentDataWriter = null; //todo: why is this static? Multiple servers etc..
+	//writer to write to file
+	private static PrintWriter persistentDataWriter = null; //todo: why is this static? Multiple servers etc..
 
-    //method to read from the file
-    public static void read(File persistentFile, Server server){
-        try{
-            //reads from file if it hasn't been created yet
-            if(!persistentFile.createNewFile()){
-                BufferedReader reader = new BufferedReader(new FileReader(persistentFile));
-                String line;
+	//method to read from the file
+	public static void read(File persistentFile, Server server){
+		try{
+			//reads from file if it hasn't been created yet
+			if(!persistentFile.createNewFile()){
+				BufferedReader reader = new BufferedReader(new FileReader(persistentFile));
 
-                while ((line = reader.readLine()) != null) {
-                    String[] command = line.split("\\s+");
+				String line;
 
-                    //checks each command and calls appropriate action
-                    switch(command[0]){
-                        //user should be added
-                        case "U-ADD":
-                            server.addNewUser(command[1], command[2], command[3]);
-                            break;
+				while ((line = reader.readLine()) != null) {   
+					String[] command = line.split("\\s+");
 
-                        //conversation should be added
-                        case "C-ADD":
-                            // TODO: change the default value to be one from the persistent log
-                            // maybe use tokenizer to read in input as well to group the quoted material
-                            server.addNewConversation(command[1], command[2], command[3], command[4], "1");
-                            break;
+					//checks each command and calls appropriate action 
+					switch(command[0]){
 
-                        //message should be added
-                        case "M-ADD":
-                            server.addNewMessage(command[1], command[2], command[3], command[4],command[5]);
-                            break;
-                    }
-                }
-            }
-        }catch (IOException e) {
-            //todo: Log? Print something more information?
-            e.printStackTrace();
-        }
-    }
+					//user should be added
+					case "U-ADD":
+						command = line.split("\\s+",4);
 
-    //adds command to queue
-    public static void writeQueue(String command){
-        persistentQueue.add(command);
-    }
+						server.addNewUser(command[1], command[2], command[3]);
+						break;
 
-    //writes the queue to the file
-    public static void writeFile(String persistentFile) throws IOException{
+						//conversation should be added
+					case "C-ADD":
+						command = line.split("\\s+",5);
 
-        persistentDataWriter = new PrintWriter(new FileWriter(persistentFile, true));
+						server.addNewConversation(command[1], command[2], command[3], command[4], "1");
+						break;
 
-        while (!PersistentLog.persistentQueue.isEmpty()) {
-            String command = PersistentLog.persistentQueue.pop();
-            persistentDataWriter.println(command);
-        }
-        persistentDataWriter.close();
-    }
+						//message should be added
+					case "M-ADD":
+						command = line.split("\\s+",6);
+
+						server.addNewMessage(command[1], command[2], command[3], command[4],command[5]);
+						break;
+					}
+				}   
+			}
+		}catch (IOException e) {
+			//todo: Log? Print something more information?
+			e.printStackTrace();
+		}
+	}
+
+	//adds command to queue
+	public static void writeQueue(String command){
+		persistentQueue.add(command);
+	}
+
+	//writes the queue to the file
+	public static void writeFile(String persistentFile) throws IOException{
+
+		persistentDataWriter = new PrintWriter(new FileWriter(persistentFile, true));
+
+		while (!PersistentLog.persistentQueue.isEmpty()) {
+			String command = PersistentLog.persistentQueue.pop();
+			persistentDataWriter.println(command);
+		}
+		persistentDataWriter.close();
+	}
 
 }
