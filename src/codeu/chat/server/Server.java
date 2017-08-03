@@ -360,7 +360,7 @@ public void addNewUser(String id, String time, String name){
 }
 
 //adds new conversation at the start
-  public void addNewConversation(String c_id, String c_owner, String creation, String title, String default_control){
+  public void addNewConversation(String c_id, String c_owner, String creation, String default_control, String title){
 
     //converts strings to necessary objects
     Uuid id;

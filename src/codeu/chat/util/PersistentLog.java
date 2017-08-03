@@ -44,9 +44,9 @@ public class PersistentLog {
 
 						//conversation should be added
 					case "C-ADD":
-						command = line.split("\\s+",5);
+						command = line.split("\\s+",6);
 
-						server.addNewConversation(command[1], command[2], command[3], command[4], "1");
+						server.addNewConversation(command[1], command[2], command[3], command[4], command[5]);
 						break;
 
 						//message should be added

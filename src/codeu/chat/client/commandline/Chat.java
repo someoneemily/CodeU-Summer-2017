@@ -378,6 +378,7 @@ public final class Chat {
 		panel.register("help", new Panel.Command() {
 			@Override
 			public void invoke(List<String> args) {
+				System.out.println("USER MODE");
 				if(conversation.conversation.isCreator(conversation.user.id)){
 					System.out.println("  add-owner <user>");
 					System.out.println("    Add the user as an owner of the conversation.");
@@ -390,7 +391,6 @@ public final class Chat {
 					System.out.println("  remove-member <user>");
 					System.out.println("    Remove the user as a member of the conversation.");
 				}
-				System.out.println("USER MODE");
 				System.out.println("  m-list");
 				System.out.println("    List all messages in the current conversation.");
 				System.out.println("  m-add <message>");
