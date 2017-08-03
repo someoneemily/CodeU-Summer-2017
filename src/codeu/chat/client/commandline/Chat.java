@@ -418,7 +418,7 @@ public final class Chat {
 					username += (" " + itr.next().trim());
 				}
 				if (username.length() > 0) {
-					conversation.conversation.removeOwner(conversation.findUser(username));
+					conversation.conversation.addOwner(conversation.findUser(username));
 				} else {
 					System.out.println("ERROR: Must enter valid username");
 				}
@@ -461,7 +461,7 @@ public final class Chat {
 					username += (" " + itr.next().trim());
 				}
 				if (username.length() > 0) {
-					conversation.conversation.removeOwner(conversation.findUser(username));
+					conversation.conversation.addMember(conversation.findUser(username));
 				} else {
 					System.out.println("ERROR: Must enter valid username");
 				}
@@ -483,7 +483,7 @@ public final class Chat {
 					username += (" " + itr.next().trim());
 				}
 				if (username.length() > 0) {
-					conversation.conversation.removeOwner(conversation.findUser(username));
+					conversation.conversation.removeMember(conversation.findUser(username));
 				} else {
 					System.out.println("ERROR: Must enter valid username");
 				}
