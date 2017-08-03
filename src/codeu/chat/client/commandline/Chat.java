@@ -244,7 +244,7 @@ public final class Chat {
                 System.out.println("USER MODE");
                 System.out.println("  c-list");
                 System.out.println("    List all conversations that the current user can interact with.");
-                System.out.println("  c-add \"<title>\" <default access control (1=open, 0=private)>");
+                System.out.println("  c-add <default access control (1=open, 0=private)> \"<title>\"");
                 System.out.println("    Add a new conversation with the given title and join it as the current user.");
                 System.out.println("  c-join <title>");
                 System.out.println("    Join the conversation as the current user.");
@@ -288,9 +288,10 @@ public final class Chat {
                 while (itr.hasNext()) {
                     String current = itr.next();
                     if(itr.hasNext()){
-                        conversationName += (current.trim() + " ");
-                    }else{
                         default_control = current.trim();
+                    }else{
+                        conversationName += (current.trim() + " ");
+
                     }
                 }
                 final String name = conversationName.trim();
