@@ -260,6 +260,15 @@ private static final long LOG_REFRESH_MS = 20000;
 
         controller.changeDefault(conversation, default_control);
 
+        // adds command of changing conversation default to log
+        // command in format "change-default <byte_default_control>"
+        String conversationAddCommand = "change-default "
+                + conversation + " "
+                + default_control;
+
+        //add command to queue
+        PersistentLog.writeQueue(conversationAddCommand);
+
         Serializers.INTEGER.write(out, NetworkCode.CHANGE_DEFAULT_RESPONSE);
 
       }
