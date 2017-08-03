@@ -55,4 +55,8 @@ public interface BasicController {
   //
   void changeDefault(Uuid conversation, String default_control);
 
+  // Get Default Access Control
+  //
+  byte getDefault(Uuid conversation);
+
 }

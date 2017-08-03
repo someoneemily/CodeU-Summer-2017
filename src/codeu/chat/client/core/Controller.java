@@ -134,4 +134,28 @@ final class Controller implements BasicController {
     }
 
   }
+
+  @Override
+  public byte getDefault(Uuid conversation_id){
+
+    byte response = 0;
+    try (final Connection connection = source.connect()) {
+
+      Serializers.INTEGER.write(connection.out(), NetworkCode.RETRIEVE_DEFAULT_REQUEST);
+      Uuid.SERIALIZER.write(connection.out(), conversation_id);
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.RETRIEVE_DEFAULT_RESPONSE) {
+        LOG.info("getting conversation default: Response completed.");
+        response = Byte.parseByte(Serializers.STRING.read(connection.in()));
+      } else {
+        LOG.error("Response from server failed.");
+      }
+    } catch (Exception ex) {
+      System.out.println("ERROR: Exception during call on server. Check log for details.");
+      LOG.error(ex, "Exception during call on server.");
+    }
+
+    return response;
+
+  }
 }

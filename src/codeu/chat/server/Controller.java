@@ -152,6 +152,17 @@ public final class Controller implements RawController, BasicController {
 
   }
 
+  @Override
+  public byte getDefault(Uuid conversation_id){
+
+    byte default_control = model.conversationById().first(conversation_id).default_control;
+
+    LOG.info("Conversation default access control is " + default_control);
+
+    return default_control;
+
+  }
+
   private Uuid createId() {
 
     Uuid candidate;

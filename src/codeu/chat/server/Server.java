@@ -264,6 +264,18 @@ private static final long LOG_REFRESH_MS = 20000;
 
       }
     });
+
+    // Retrieve the default access control of the conversation
+    this.commands.put(NetworkCode.RETRIEVE_DEFAULT_REQUEST, new Command() {
+      @Override
+      public void onMessage(InputStream in, OutputStream out) throws IOException {
+
+        final Uuid conversationId = Uuid.SERIALIZER.read(in);
+
+        Serializers.INTEGER.write(out, NetworkCode.RETRIEVE_DEFAULT_RESPONSE);
+        Serializers.STRING.write(out, ""+controller.getDefault(conversationId));
+      }
+    });
     
     this.timeline.scheduleNow(new Runnable() {
         @Override

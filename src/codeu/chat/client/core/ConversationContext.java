@@ -84,6 +84,12 @@ public final class ConversationContext {
     controller.changeDefault(conversation.id, default_control);
   }
 
+  // Retrieves the server default
+  //
+  public byte getDefault(){
+    return controller.getDefault(conversation.id);
+  }
+
   private ConversationPayload getUpdated() {
     final Collection<Uuid> ids = Arrays.asList(conversation.id);
     final Iterator<ConversationPayload> payloads = view.getConversationPayloads(ids).iterator();

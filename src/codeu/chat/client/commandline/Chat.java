@@ -14,7 +14,9 @@
 
 package codeu.chat.client.commandline;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -462,7 +464,14 @@ public final class Chat {
                     Iterator<String> itr = args.iterator();
                     String default_control = itr.next().trim();
                     if (default_control.length() > 0) {
-                        conversation.changeDefault(default_control);
+                        byte client_default = conversation.conversation.default_control;
+                        byte server_default = conversation.getDefault();
+                        if(Byte.parseByte(default_control) != server_default){
+                            conversation.changeDefault(default_control);
+                            System.out.println("The conversation default is now "+(Byte.parseByte(default_control)>=1?"public.":"private."));
+                        }else{
+                            System.out.println("The conversation default is still "+((server_default>=1)?"public.":"private"));
+                        }
                     } else {
                         System.out.println("ERROR: default control byte must be specified");
                     }
