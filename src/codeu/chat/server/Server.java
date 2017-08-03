@@ -178,6 +178,7 @@ private static final long LOG_REFRESH_MS = 20000;
                   + conversation.id.toString() + " "
                   + conversation.owner.toString() + " "
                   + conversation.creation.inMs() + " "
+                  + default_control + " "
                   + conversation.title;
 
           //add command to queue
