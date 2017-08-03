@@ -193,19 +193,6 @@ private static final long LOG_REFRESH_MS = 20000;
         Serializers.nullable(ConversationHeader.SERIALIZER).write(out, conversation);
       }
     });
-
-    // Find User - A client wants to find the Uuid of one user.
-    this.commands.put(NetworkCode.FIND_USER_REQUEST, new Command() {
-      @Override
-      public void onMessage(InputStream in, OutputStream out) throws IOException {
-    	  
-    	final String username = Serializers.STRING.read(in);
-
-        Serializers.INTEGER.write(out, NetworkCode.FIND_USER_RESPONSE);
-        Uuid.SERIALIZER.write(out, view.findUserID(username));
-        
-      }
-    });
     
     // Get Users - A client wants to get all the users from the back end.
     this.commands.put(NetworkCode.GET_USERS_REQUEST, new Command() {
@@ -257,6 +244,35 @@ private static final long LOG_REFRESH_MS = 20000;
 
         Serializers.INTEGER.write(out, NetworkCode.GET_MESSAGES_BY_ID_RESPONSE);
         Serializers.collection(Message.SERIALIZER).write(out, messages);
+      }
+    });
+    
+
+    // Find User - A client wants to find the Uuid of one user.
+    this.commands.put(NetworkCode.FIND_USER_REQUEST, new Command() {
+      @Override
+      public void onMessage(InputStream in, OutputStream out) throws IOException {
+    	  
+    	final String username = Serializers.STRING.read(in);
+
+        Serializers.INTEGER.write(out, NetworkCode.FIND_USER_RESPONSE);
+        Uuid.SERIALIZER.write(out, view.findUserID(username));
+        
+      }
+    });
+    
+    // Change Access - A client wants to change the access of one user.
+    this.commands.put(NetworkCode.CHANGE_ACCESS_REQUEST, new Command() {
+      @Override
+      public void onMessage(InputStream in, OutputStream out) throws IOException {
+    	  
+    	final String user = Serializers.STRING.read(in);
+    	final Uuid conversation = Uuid.SERIALIZER.read(in);
+    	final String byte_val = Serializers.STRING.read(in);
+    	
+    	controller.changeAccess(user, conversation, byte_val);
+    	
+    	Serializers.INTEGER.write(out, NetworkCode.CHANGE_ACCESS_RESPONSE);  
       }
     });
     

@@ -103,6 +103,7 @@ final class Controller implements BasicController {
 
       if (Serializers.INTEGER.read(connection.in()) == NetworkCode.NEW_CONVERSATION_RESPONSE) {
         response = Serializers.nullable(ConversationHeader.SERIALIZER).read(connection.in());
+        LOG.info("newConversation: Response completed.");
       } else {
         LOG.error("Response from server failed.");
       }
@@ -112,5 +113,26 @@ final class Controller implements BasicController {
     }
 
     return response;
+  }
+  
+  @Override
+  public void changeAccess(String user, Uuid conversation, String byte_val){
+	  
+	  try (final Connection connection = source.connect()) {
+
+	      Serializers.INTEGER.write(connection.out(), NetworkCode.CHANGE_ACCESS_REQUEST);
+	      Serializers.STRING.write(connection.out(), user);
+	      Uuid.SERIALIZER.write(connection.out(), conversation);
+	      Serializers.STRING.write(connection.out(), byte_val);
+
+	      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.CHANGE_ACCESS_RESPONSE) {
+	    	LOG.info("changeAccess: Response completed.");
+	      } else {
+	        LOG.error("Response from server failed.");
+	      }
+	    } catch (Exception ex) {
+	      System.out.println("ERROR: Exception during call on server. Check log for details.");
+	      LOG.error(ex, "Exception during call on server.");
+	    }
   }
 }

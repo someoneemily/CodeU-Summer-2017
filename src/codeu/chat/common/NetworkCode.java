@@ -39,5 +39,7 @@ public final class NetworkCode {
       SERVER_INFO_REQUEST = 31,
       SERVER_INFO_RESPONSE = 32,
       FIND_USER_REQUEST = 33,
-      FIND_USER_RESPONSE = 34;
+      FIND_USER_RESPONSE = 34,
+      CHANGE_ACCESS_REQUEST = 35,
+      CHANGE_ACCESS_RESPONSE = 36;
 }

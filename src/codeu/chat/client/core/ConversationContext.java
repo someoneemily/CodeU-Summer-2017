@@ -88,9 +88,20 @@ public final class ConversationContext {
     final Iterator<Message> messages = view.getMessages(Arrays.asList(id)).iterator();
     return messages.hasNext() ? new MessageContext(messages.next(), view) : null;
   }
+
+  public void addMember(String name){
+	  controller.changeAccess(name, conversation.id, "1");
+  } 
   
-  public Uuid findUser(String name) {
-	  Uuid uuid = view.findUserID(name);
-	  return uuid;
+  public void removeMember(String name){
+	  controller.changeAccess(name, conversation.id, "0");
+  } 
+  
+  public void addOwner(String name){
+	  controller.changeAccess(name, conversation.id, "2");
   }
+  
+  public void removeOwner(String name){
+	  controller.changeAccess(name, conversation.id, "1");
+  } 
 }

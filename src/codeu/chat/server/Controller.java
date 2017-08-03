@@ -142,6 +142,16 @@ public final class Controller implements RawController, BasicController {
 
     return conversation;
   }
+  
+  @Override
+  public void changeAccess(String user, Uuid conversation, String byte_val) {
+	  
+	  final ConversationHeader foundConversation = model.conversationById().first(conversation);
+	  final User foundUser = model.userByText().first(user);
+	  foundConversation.changeAccess(foundUser.id, byte_val);
+	  
+	  LOG.info("Access changed for: " + user);
+  }
 
   private Uuid createId() {
 

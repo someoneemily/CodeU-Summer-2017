@@ -31,7 +31,6 @@ import codeu.chat.client.core.UserContext;
 import codeu.chat.common.ServerInfo;
 import codeu.chat.common.User;
 import codeu.chat.util.Tokenizer;
-import codeu.chat.util.Uuid;
 
 public final class Chat {
 
@@ -418,7 +417,7 @@ public final class Chat {
 					username += (" " + itr.next().trim());
 				}
 				if (username.length() > 0) {
-					conversation.conversation.addOwner(conversation.findUser(username));
+					conversation.addOwner(username);
 				} else {
 					System.out.println("ERROR: Must enter valid username");
 				}
@@ -440,7 +439,7 @@ public final class Chat {
 					username += (" " + itr.next().trim());
 				}
 				if (username.length() > 0) {
-					conversation.conversation.removeOwner(conversation.findUser(username));
+					conversation.removeOwner(username);
 				} else {
 					System.out.println("ERROR: Must enter valid username");
 				}
@@ -461,7 +460,7 @@ public final class Chat {
 					username += (" " + itr.next().trim());
 				}
 				if (username.length() > 0) {
-					conversation.conversation.addMember(conversation.findUser(username));
+					conversation.addMember(username);
 				} else {
 					System.out.println("ERROR: Must enter valid username");
 				}
@@ -483,7 +482,7 @@ public final class Chat {
 					username += (" " + itr.next().trim());
 				}
 				if (username.length() > 0) {
-					conversation.conversation.removeMember(conversation.findUser(username));
+					conversation.removeMember(username);
 				} else {
 					System.out.println("ERROR: Must enter valid username");
 				}

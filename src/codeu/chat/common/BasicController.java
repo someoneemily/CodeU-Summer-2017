@@ -50,5 +50,10 @@ public interface BasicController {
   //  representing the full state of the conversation on the server.
   //  Whether conversations can have the same title is undefined.
   ConversationHeader newConversation(String title, Uuid owner, String default_control);
+  
+  // CHANGE ACCESS
+  //
+  // Change the access of a user in a conversation.
+  void changeAccess(String user, Uuid conversation, String byte_val);
 
 }

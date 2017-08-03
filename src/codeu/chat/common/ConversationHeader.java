@@ -125,21 +125,9 @@ public final class ConversationHeader {
 	  
   }
   
-  public void addMember(Uuid user){
-	  ac_list.put(user, (byte)1);
-  } 
-  
-  public void removeMember(Uuid user){
-	  ac_list.put(user, (byte)0);
-  } 
-  
-  public void addOwner(Uuid user){
-	  ac_list.put(user, (byte)2);
+  public void changeAccess(Uuid user, String byte_val){
+	  ac_list.put(user, Byte.parseByte(byte_val));
   }
-  
-  public void removeOwner(Uuid user){
-	  ac_list.put(user, (byte)1);
-  } 
   
 }
 
