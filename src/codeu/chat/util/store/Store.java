@@ -76,13 +76,14 @@ public final class Store<KEY, VALUE> implements StoreAccessor<KEY, VALUE> {
     StoreLink<KEY, VALUE> current_to_remove = prev.next;
     StoreLink<KEY, VALUE> next_link = ceiling(key);
 
-    // "current.next" may be null, but "current" can never be null. So it
-    // should always be safe to call to current.
+    // prev will never be null, neither will current
+    // if the conversation to be removed is not the last one
     if(next_link != null){
       final StoreLink<KEY, VALUE> newLink = new StoreLink<>(key, value, next_link);
       prev.next = newLink;
     }
     else{
+      // if the conversation to be removed is the last one
       final StoreLink<KEY, VALUE> newLink = new StoreLink<>(key, value, next_link);
       prev.next = null;
     }
