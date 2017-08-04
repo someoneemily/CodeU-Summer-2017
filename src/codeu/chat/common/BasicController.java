@@ -59,4 +59,6 @@ public interface BasicController {
   //
   byte getDefault(Uuid conversation);
 
+boolean checkAccess(Uuid id, Uuid id2, String string);
+
 }

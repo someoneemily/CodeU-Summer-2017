@@ -89,6 +89,18 @@ public final class ConversationContext {
   public byte getDefault(){
     return controller.getDefault(conversation.id);
   }
+  
+  public boolean checkMember(){
+	  return controller.checkAccess(this.user.id, conversation.id, "Member");
+  }
+  
+  public boolean checkOwner(){
+	  return controller.checkAccess(this.user.id, conversation.id, "Owner");
+  }
+  
+  public boolean checkCreator(){
+	  return controller.checkAccess(this.user.id, conversation.id, "Creator");
+  }
 
   private ConversationPayload getUpdated() {
     final Collection<Uuid> ids = Arrays.asList(conversation.id);

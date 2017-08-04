@@ -134,6 +134,38 @@ final class Controller implements BasicController {
     }
 
   }
+  
+  public boolean checkAccess(Uuid user_id, Uuid conversation_id, String toCheck){
+	  
+	  try(final Connection connection = source.connect()){
+		  if(toCheck.equals("Member")){
+			  Serializers.INTEGER.write(connection.out(), NetworkCode.CHECK_MEMBER_REQUEST);
+		  }
+		  else if(toCheck.equals("Creator")){
+			  Serializers.INTEGER.write(connection.out(), NetworkCode.CHECK_CREATOR_REQUEST);
+		  }
+		  else if(toCheck.equals("Owner")){
+			  Serializers.INTEGER.write(connection.out(), NetworkCode.CHECK_OWNER_REQUEST);
+		  }
+		  
+		  Uuid.SERIALIZER.write(connection.out(), user_id);
+		  Uuid.SERIALIZER.write(connection.out(), conversation_id);
+		  
+		  
+		  if(Serializers.INTEGER.read(connection.in()) == NetworkCode.RETRIEVE_USER_STATUS){
+			  LOG.info("checking status of user: Response completed.");
+			  return Serializers.BOOLEAN.read(connection.in());
+			  
+		  } else{
+			  LOG.error("Response from server failed.");
+		  }
+		  
+	  } catch(Exception ex){
+		  System.out.println("ERROR: Exception durring call on server. Check log for details.");
+		  LOG.error(ex, "Exception during call on server.");
+	  }
+	  return false;
+  }
 
   @Override
   public byte getDefault(Uuid conversation_id){

@@ -286,6 +286,19 @@ private static final long LOG_REFRESH_MS = 20000;
       }
     });
     
+    //Checks if the user is an owner
+    this.commands.put(NetworkCode.CHECK_MEMBER_REQUEST, new Command() {
+    	
+    	public void onMessage(InputStream in, OutputStream out) throws IOException{
+    		final Uuid user_id = Uuid.SERIALIZER.read(in);
+    		final Uuid conversation_id = Uuid.SERIALIZER.read(in);
+    		
+    		Serializers.INTEGER.write(out, NetworkCode.RETRIEVE_USER_STATUS);
+    		Serializers.BOOLEAN.write(out, controller.checkAccess(user_id, conversation_id, "Member"));
+    	}
+    	
+    });
+    
     this.timeline.scheduleNow(new Runnable() {
         @Override
         public void run() {

@@ -162,6 +162,20 @@ public final class Controller implements RawController, BasicController {
     return default_control;
 
   }
+  
+  @Override
+  public boolean checkAccess(Uuid user_id, Uuid conversation_id, String toCheck) {
+	if(toCheck.equals("Member")){
+		return model.conversationById().first(conversation_id).isMember(user_id);
+	}
+	else if(toCheck.equals("Owner")){
+		return model.conversationById().first(conversation_id).isOwner(user_id);
+	}
+	else if(toCheck.equals("Creator")){
+		return model.conversationById().first(conversation_id).isCreator(user_id);
+	}
+  	return false;
+  }
 
   private Uuid createId() {
 
@@ -187,5 +201,7 @@ public final class Controller implements RawController, BasicController {
   }
 
   private boolean isIdFree(Uuid id) { return !isIdInUse(id); }
+
+
 
 }
