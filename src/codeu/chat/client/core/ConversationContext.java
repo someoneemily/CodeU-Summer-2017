@@ -90,16 +90,16 @@ public final class ConversationContext {
     return controller.getDefault(conversation.id);
   }
   
-  public boolean checkMember(){
-	  return controller.checkAccess(this.user.id, conversation.id, "Member");
+  public boolean checkMember(Uuid user_id){
+	  return controller.checkAccess(user_id, conversation.id, "Member");
   }
   
-  public boolean checkOwner(){
-	  return controller.checkAccess(this.user.id, conversation.id, "Owner");
+  public boolean checkOwner(Uuid user_id){
+	  return controller.checkAccess(user_id, conversation.id, "Owner");
   }
   
-  public boolean checkCreator(){
-	  return controller.checkAccess(this.user.id, conversation.id, "Creator");
+  public boolean checkCreator(Uuid user_id){
+	  return controller.checkAccess(user_id, conversation.id, "Creator");
   }
 
   private ConversationPayload getUpdated() {

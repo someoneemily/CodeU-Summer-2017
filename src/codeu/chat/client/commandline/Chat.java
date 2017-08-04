@@ -329,7 +329,7 @@ public final class Chat {
                         System.out.format("ERROR: No conversation with name '%s'\n", name);
                     }
                     else if (conversation.conversation.isRemoved(user.user.id) ||
-                            (conversation.conversation.default_control == 0 && !conversation.conversation.isMember(user.user.id))){
+                            (conversation.conversation.default_control == 0 && !conversation.checkMember(user.user.id))){
                     	System.out.format("Not allowed to join");
                     }
                     else {
@@ -407,7 +407,7 @@ public final class Chat {
         panel.register("m-list", new Panel.Command() {
             @Override
             public void invoke(List<String> args) {
-            	if(conversation.conversation.isMember(conversation.user.id)){
+            	if(conversation.checkMember(conversation.user.id)){
             		System.out.println("--- start of conversation ---");
             		for (MessageContext message = conversation.firstMessage();
             				message != null;
@@ -435,7 +435,7 @@ public final class Chat {
         panel.register("m-add", new Panel.Command() {
             @Override
             public void invoke(List<String> args) {
-            	if(conversation.conversation.isMember(conversation.user.id)){
+            	if(conversation.checkMember(conversation.user.id)){
             		Iterator<String> itr = args.iterator();
             		String message = "";
             		while (itr.hasNext()) {
@@ -461,7 +461,7 @@ public final class Chat {
         panel.register("change-default", new Panel.Command() {
             @Override
             public void invoke(List<String> args) {
-                if(conversation.conversation.isCreator(conversation.user.id)){
+                if(conversation.checkCreator(conversation.user.id)){
                     Iterator<String> itr = args.iterator();
                     String default_control = itr.next().trim();
                     if (default_control.length() > 0) {
