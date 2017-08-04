@@ -328,7 +328,7 @@ public final class Chat {
                     if (conversation == null) {
                         System.out.format("ERROR: No conversation with name '%s'\n", name);
                     }
-                    else if (conversation.conversation.isRemoved(user.user.id) ||
+                    else if (conversation.checkRemoved(user.user.id) ||
                             (conversation.conversation.default_control == 0 && !conversation.checkMember(user.user.id))){
                     	System.out.format("Not allowed to join");
                     }

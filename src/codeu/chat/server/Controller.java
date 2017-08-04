@@ -174,6 +174,9 @@ public final class Controller implements RawController, BasicController {
 	else if(toCheck.equals("Creator")){
 		return model.conversationById().first(conversation_id).isCreator(user_id);
 	}
+	else if(toCheck.equals("Removed")){
+		return model.conversationById().first(conversation_id).isRemoved(user_id);
+	}
   	return false;
   }
 

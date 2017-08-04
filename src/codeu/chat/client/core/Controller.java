@@ -147,6 +147,9 @@ final class Controller implements BasicController {
 		  else if(toCheck.equals("Owner")){
 			  Serializers.INTEGER.write(connection.out(), NetworkCode.CHECK_OWNER_REQUEST);
 		  }
+		  else if(toCheck.equals("Removed")){
+			  Serializers.INTEGER.write(connection.out(), NetworkCode.CHECK_REMOVED_REQUEST);
+		  }
 		  
 		  Uuid.SERIALIZER.write(connection.out(), user_id);
 		  Uuid.SERIALIZER.write(connection.out(), conversation_id);

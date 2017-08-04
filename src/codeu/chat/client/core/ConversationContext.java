@@ -101,6 +101,10 @@ public final class ConversationContext {
   public boolean checkCreator(Uuid user_id){
 	  return controller.checkAccess(user_id, conversation.id, "Creator");
   }
+  
+  public boolean checkRemoved(Uuid user_id){
+	  return controller.checkAccess(user_id, conversation.id, "Removed");
+  }
 
   private ConversationPayload getUpdated() {
     final Collection<Uuid> ids = Arrays.asList(conversation.id);
