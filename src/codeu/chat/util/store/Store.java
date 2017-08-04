@@ -67,6 +67,30 @@ public final class Store<KEY, VALUE> implements StoreAccessor<KEY, VALUE> {
     }
   }
 
+  public void remove(KEY key, VALUE value) {
+
+    final StoreLink<KEY, VALUE> closestLink = floor(key);
+
+    // Finds the previous, current, and next link
+    StoreLink<KEY, VALUE> prev = (closestLink == null) ? (rootLink) : (closestLink);
+    StoreLink<KEY, VALUE> current_to_remove = prev.next;
+    StoreLink<KEY, VALUE> next_link = ceiling(key);
+
+    // "current.next" may be null, but "current" can never be null. So it
+    // should always be safe to call to current.
+    if(next_link != null){
+      final StoreLink<KEY, VALUE> newLink = new StoreLink<>(key, value, next_link);
+      prev.next = newLink;
+    }
+    else{
+      final StoreLink<KEY, VALUE> newLink = new StoreLink<>(key, value, next_link);
+      prev.next = null;
+    }
+    index.remove(key);
+
+  }
+
+
   @Override
   public VALUE first(KEY key) {
     final StoreLink<KEY, VALUE> link = index.get(key);
