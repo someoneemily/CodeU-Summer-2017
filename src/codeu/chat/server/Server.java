@@ -416,6 +416,18 @@ public void addNewUser(String id, String time, String name){
 	  
 }
 
+//adds any default control changes at the start 
+public void changeDefault(String conversation, String default_control){
+	Uuid conversation_id;
+	try{
+		conversation_id = Uuid.parse(conversation);
+		controller.changeDefault(conversation_id, default_control);
+	} catch(IOException e){
+		LOG.info("Could not read in default control from persistent log");
+		e.printStackTrace();
+	}
+}
+
 //adds new conversation at the start
   public void addNewConversation(String c_id, String c_owner, String creation, String title, String default_control){
 

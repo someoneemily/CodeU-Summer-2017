@@ -49,6 +49,9 @@ public class PersistentLog {
                         case "M-ADD":
                             server.addNewMessage(command[1], command[2], command[3], command[4],command[5]);
                             break;
+                        
+                        case "change-default":
+                        	server.changeDefault(command[1], command[2]);
                     }
                 }
             }

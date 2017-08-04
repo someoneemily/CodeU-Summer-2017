@@ -138,6 +138,7 @@ final class Controller implements BasicController {
   public boolean checkAccess(Uuid user_id, Uuid conversation_id, String toCheck){
 	  
 	  try(final Connection connection = source.connect()){
+		  //toCheck contains what access is being checked
 		  if(toCheck.equals("Member")){
 			  Serializers.INTEGER.write(connection.out(), NetworkCode.CHECK_MEMBER_REQUEST);
 		  }
@@ -154,7 +155,7 @@ final class Controller implements BasicController {
 		  Uuid.SERIALIZER.write(connection.out(), user_id);
 		  Uuid.SERIALIZER.write(connection.out(), conversation_id);
 		  
-		  
+		  //Has retrieved user status
 		  if(Serializers.INTEGER.read(connection.in()) == NetworkCode.RETRIEVE_USER_STATUS){
 			  LOG.info("checking status of user: Response completed.");
 			  return Serializers.BOOLEAN.read(connection.in());
