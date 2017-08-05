@@ -64,6 +64,11 @@ public interface BasicController {
   // creator of the conversation can delete the conversastion
   void deleteConversation(Uuid conversation_id);
 
+  // DELETE USER
+  //
+  // delete the user
+  boolean deleteUser(Uuid user_id);
+
 boolean checkAccess(Uuid id, Uuid id2, String string);
 
 }

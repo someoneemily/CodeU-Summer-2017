@@ -166,6 +166,20 @@ private static final long LOG_REFRESH_MS = 20000;
       }
     });
 
+    // Delete Conversation - A creator of a conversation wants to delete the conversation.
+      this.commands.put(NetworkCode.DELETE_USER_REQUEST,  new Command() {
+          @Override
+          public void onMessage(InputStream in, OutputStream out) throws IOException {
+
+              final Uuid user_id = Uuid.SERIALIZER.read(in);
+
+              boolean response = controller.deleteUser(user_id);
+
+              Serializers.INTEGER.write(out, NetworkCode.DELETE_USER_RESPONSE);
+              Serializers.BOOLEAN.write(out, response);
+          }
+      });
+
     // New Conversation - A client wants to add a new conversation to the back end.
     this.commands.put(NetworkCode.NEW_CONVERSATION_REQUEST,  new Command() {
       @Override

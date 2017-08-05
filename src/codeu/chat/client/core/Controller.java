@@ -90,6 +90,28 @@ final class Controller implements BasicController {
   }
 
   @Override
+  public boolean deleteUser(Uuid user_id) {
+
+    try (final Connection connection = source.connect()) {
+
+      Serializers.INTEGER.write(connection.out(), NetworkCode.DELETE_USER_REQUEST);
+      Uuid.SERIALIZER.write(connection.out(), user_id);
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.DELETE_USER_RESPONSE) {
+        LOG.info("Delete User: Response completed.");
+        return Serializers.BOOLEAN.read(connection.in());
+      } else {
+        LOG.error("Response from server failed.");
+      }
+    } catch (Exception ex) {
+      System.out.println("ERROR: Exception during call on server. Check log for details.");
+      LOG.error(ex, "Exception during call on server.");
+    }
+
+    return false;
+  }
+
+  @Override
   public ConversationHeader newConversation(String title, Uuid owner, String default_control)  {
 
     ConversationHeader response = null;

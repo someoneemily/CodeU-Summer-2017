@@ -50,4 +50,9 @@ public interface RawController {
   //
   // creator of the conversation can delete the conversastion
   void deleteConversation(Uuid conversation_id);
+
+  // DELETE USER
+  //
+  // delete the user
+  boolean deleteUser(Uuid user_id);
 }

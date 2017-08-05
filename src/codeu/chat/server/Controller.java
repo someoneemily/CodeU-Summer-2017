@@ -50,6 +50,13 @@ public final class Controller implements RawController, BasicController {
   }
 
   @Override
+  public boolean deleteUser(Uuid user_id){
+    User user = model.userById().first(user_id);
+    model.remove(user);
+    LOG.info("User " + user.name + " is deleted.");
+    return true;
+  }
+  @Override
   public ConversationHeader newConversation(String title, Uuid owner, String default_control) {
     return newConversation(createId(), title, owner, Time.now(), default_control);
   }
