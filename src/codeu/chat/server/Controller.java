@@ -55,6 +55,14 @@ public final class Controller implements RawController, BasicController {
   }
 
   @Override
+  public void deleteConversation(Uuid conversation_id){
+    ConversationHeader conversation = model.conversationById().first(conversation_id);
+    model.remove(conversation);
+    LOG.info("Conversation " + conversation.title + "is removed");
+
+  }
+
+  @Override
   public Message newMessage(Uuid id, Uuid author, Uuid conversation, String body, Time creationTime) {
 
     final User foundUser = model.userById().first(author);

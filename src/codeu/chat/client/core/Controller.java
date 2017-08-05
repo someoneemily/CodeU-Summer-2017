@@ -134,6 +134,24 @@ final class Controller implements BasicController {
     }
 
   }
+  @Override
+  public void deleteConversation(Uuid conversation_id){
+
+      try (final Connection connection = source.connect()) {
+          Serializers.INTEGER.write(connection.out(), NetworkCode.DELETE_CONVERSATION_REQUEST);
+          Uuid.SERIALIZER.write(connection.out(), conversation_id);
+
+          if (Serializers.INTEGER.read(connection.in()) == NetworkCode.DELETE_CONVERSATION_RESPONSE) {
+              LOG.info("Deleted conversation. Response completed.");
+          } else {
+              LOG.error("Response from server failed.");
+          }
+      } catch (Exception ex) {
+          System.out.println("ERROR: Exception during call on server. Check log for details.");
+          LOG.error(ex, "Exception during call on server.");
+      }
+
+  }
   
   public boolean checkAccess(Uuid user_id, Uuid conversation_id, String toCheck){
 	  

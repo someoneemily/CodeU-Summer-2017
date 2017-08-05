@@ -92,6 +92,13 @@ public final class Model {
     conversationPayloadById.insert(conversation.id, new ConversationPayload(conversation.id));
   }
 
+  public void remove(ConversationHeader conversation) {
+    conversationById.remove(conversation.id, conversation);
+    conversationByTime.remove(conversation.creation, conversation);
+    conversationByText.remove(conversation.title, conversation);
+    conversationPayloadById.remove(conversation.id, new ConversationPayload(conversation.id));
+  }
+
   public StoreAccessor<Uuid, ConversationHeader> conversationById() {
     return conversationById;
   }

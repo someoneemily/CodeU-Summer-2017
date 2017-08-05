@@ -84,6 +84,11 @@ public final class ConversationContext {
     controller.changeDefault(conversation.id, default_control);
   }
 
+  public void deleteConversation(){
+    // passes along call to delete conversation
+    controller.deleteConversation(conversation.id);
+  }
+
   // Retrieves the server default
   //
   public byte getDefault(){

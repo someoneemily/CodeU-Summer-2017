@@ -246,6 +246,8 @@ public final class Chat {
                 System.out.println("    List all conversations that the current user can interact with.");
                 System.out.println("  c-add <default access control (1=open, 0=private)> \"<title>\"");
                 System.out.println("    Add a new conversation with the given title and join it as the current user.");
+                System.out.println("  c-delete <title>");
+                System.out.println("    Delete a conversation you created.");
                 System.out.println("  c-join <title>");
                 System.out.println("    Join the conversation as the current user.");
                 System.out.println("  info");
@@ -305,6 +307,46 @@ public final class Chat {
                 } else {
                     System.out.println("ERROR: Missing <title> or missing default access control string");
                 }
+            }
+        });
+
+        // C-JOIN (join conversation)
+        //
+        // Add a command that will joing a conversation when the user enters
+        // "c-join" while on the user panel.
+        //
+        panel.register("c-delete", new Panel.Command() {
+            @Override
+            public void invoke(List<String> args) {
+                Iterator<String> itr = args.iterator();
+                String conversationName = "";
+                while (itr.hasNext()) {
+                    conversationName += (itr.next().trim() + " ");
+                }
+                final String name = conversationName.trim();
+
+                if (name.length() > 0) {
+                    final ConversationContext conversation = find(name);
+                    if (conversation == null) {
+                        System.out.format("ERROR: No conversation with name '%s'\n", name);
+                    }
+                    else if (conversation.checkCreator(user.user.id)){
+                        conversation.deleteConversation();
+                    }
+                } else {
+                    System.out.println("ERROR: Missing <title>");
+                }
+            }
+
+            // Find the first conversation with the given name and return its context.
+            // If no conversation has the given name, this will return null.
+            private ConversationContext find(String title) {
+                for (final ConversationContext conversation : user.conversations()) {
+                    if (title.equals(conversation.conversation.title)) {
+                        return conversation;
+                    }
+                }
+                return null;
             }
         });
 

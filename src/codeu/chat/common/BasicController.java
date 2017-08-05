@@ -59,6 +59,11 @@ public interface BasicController {
   //
   byte getDefault(Uuid conversation);
 
+  // DELETE CONVERSATION
+  //
+  // creator of the conversation can delete the conversastion
+  void deleteConversation(Uuid conversation_id);
+
 boolean checkAccess(Uuid id, Uuid id2, String string);
 
 }

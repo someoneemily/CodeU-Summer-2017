@@ -46,4 +46,8 @@ public interface RawController {
   //
   void changeDefault(Uuid conversation, String default_control);
 
+  // DELETE CONVERSATION
+  //
+  // creator of the conversation can delete the conversastion
+  void deleteConversation(Uuid conversation_id);
 }
