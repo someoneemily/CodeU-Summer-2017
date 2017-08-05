@@ -58,7 +58,7 @@ public final class Controller implements RawController, BasicController {
   public void deleteConversation(Uuid conversation_id){
     ConversationHeader conversation = model.conversationById().first(conversation_id);
     model.remove(conversation);
-    LOG.info("Conversation " + conversation.title + "is removed");
+    LOG.info("Conversation " + conversation.title + " is removed");
 
   }
 

@@ -332,6 +332,10 @@ public final class Chat {
                     }
                     else if (conversation.checkCreator(user.user.id)){
                         conversation.deleteConversation();
+                        System.out.format("You have successfully deleted the " + name + " conversation.\n");
+                    }
+                    else{
+                        System.out.format("Denied Access: not a creator\n");
                     }
                 } else {
                     System.out.println("ERROR: Missing <title>");
