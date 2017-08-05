@@ -59,12 +59,37 @@ public final class Store<KEY, VALUE> implements StoreAccessor<KEY, VALUE> {
     //  1. The index class does not handle duplicate keys well (as stated in
     //     the code for the index).
     //  2. There is no advantage to having multiple equal keys in the index as
-    //     it would not help with the interators. As long as the key will map
+    //     it would not help with the iterators. As long as the key will map
     //     to the first link, the other links will always be found. This is
     //     why the insert is always put at the end of the series.
     if (closestLink == null || comparator.compare(newLink.key, closestLink.key) != 0) {
       index.put(key, newLink);
     }
+  }
+
+  public void remove(KEY key, VALUE value) {
+
+
+    // Finds the previous, current, and next link
+    // the actual StoreLink of the one you wish to remove
+    final StoreLink<KEY, VALUE> current_to_remove = floor(key);
+
+    //finding the storelink before the one you wish to remove
+    StoreLink<KEY, VALUE> prev = first();
+
+    // StoreLink to be removed is the first one
+    if(comparator.compare(prev.key, key)==0){
+      index.remove(key);
+    }else {
+      while (comparator.compare(prev.next.key, key) != 0) {
+        prev = prev.next;
+      }
+      StoreLink<KEY, VALUE> next_link = current_to_remove.next;
+      prev.next = next_link;
+      index.remove(key);
+    }
+
+
   }
 
   @Override
