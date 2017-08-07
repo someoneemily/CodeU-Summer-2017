@@ -67,7 +67,7 @@ final class ServerMain {
     Uuid id = null;
     Secret secret = null;
     RemoteAddress relayAddress = null;
-
+    
     try {
       id = Uuid.parse(args[0]);
       secret = Secret.parse(args[1]);
@@ -79,7 +79,7 @@ final class ServerMain {
       System.exit(1);
     }
 
-
+    
     if (!persistentPath.isDirectory()) {
       LOG.error("%s does not exist", persistentPath);
 

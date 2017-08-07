@@ -78,6 +78,39 @@ public final class ConversationContext {
         getMessage(updated.lastMessage);
   }
 
+  public void changeDefault(String default_control){
+
+    // passes along default access control byte as string
+    controller.changeDefault(conversation.id, default_control);
+  }
+
+  public void deleteConversation(){
+    // passes along call to delete conversation
+    controller.deleteConversation(conversation.id);
+  }
+
+  // Retrieves the server default
+  //
+  public byte getDefault(){
+    return controller.getDefault(conversation.id);
+  }
+  
+  public boolean checkMember(Uuid user_id){
+	  return controller.checkAccess(user_id, conversation.id, "Member");
+  }
+  
+  public boolean checkOwner(Uuid user_id){
+	  return controller.checkAccess(user_id, conversation.id, "Owner");
+  }
+  
+  public boolean checkCreator(Uuid user_id){
+	  return controller.checkAccess(user_id, conversation.id, "Creator");
+  }
+  
+  public boolean checkRemoved(Uuid user_id){
+	  return controller.checkAccess(user_id, conversation.id, "Removed");
+  }
+
   private ConversationPayload getUpdated() {
     final Collection<Uuid> ids = Arrays.asList(conversation.id);
     final Iterator<ConversationPayload> payloads = view.getConversationPayloads(ids).iterator();

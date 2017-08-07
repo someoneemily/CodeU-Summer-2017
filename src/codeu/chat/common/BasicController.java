@@ -56,4 +56,24 @@ public interface BasicController {
   // Change the access of a user in a conversation.
   void changeAccess(String user, Uuid conversation, String byte_val);
 
+  // Change Default Access Control
+  //
+  void changeDefault(Uuid conversation, String default_control);
+
+  // Get Default Access Control
+  //
+  byte getDefault(Uuid conversation);
+
+  // DELETE CONVERSATION
+  //
+  // creator of the conversation can delete the conversastion
+  void deleteConversation(Uuid conversation_id);
+
+  // DELETE USER
+  //
+  // delete the user
+  boolean deleteUser(Uuid user_id);
+
+boolean checkAccess(Uuid id, Uuid id2, String string);
+
 }

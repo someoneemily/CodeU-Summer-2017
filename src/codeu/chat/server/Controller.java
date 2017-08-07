@@ -50,8 +50,23 @@ public final class Controller implements RawController, BasicController {
   }
 
   @Override
+  public boolean deleteUser(Uuid user_id){
+    User user = model.userById().first(user_id);
+    model.remove(user);
+    LOG.info("User " + user.name + " is deleted.");
+    return true;
+  }
+  @Override
   public ConversationHeader newConversation(String title, Uuid owner, String default_control) {
     return newConversation(createId(), title, owner, Time.now(), default_control);
+  }
+
+  @Override
+  public void deleteConversation(Uuid conversation_id){
+    ConversationHeader conversation = model.conversationById().first(conversation_id);
+    model.remove(conversation);
+    LOG.info("Conversation " + conversation.title + " is removed");
+
   }
 
   @Override
@@ -153,6 +168,43 @@ public final class Controller implements RawController, BasicController {
 	  LOG.info("Access changed for: " + user);
   }
 
+  @Override
+  public void changeDefault(Uuid conversation_id, String default_control){
+
+    model.conversationById().first(conversation_id).setDefaultControl(default_control);
+
+    LOG.info("Conversation default access control is changed to " + default_control);
+
+  }
+
+  @Override
+  public byte getDefault(Uuid conversation_id){
+
+    byte default_control = model.conversationById().first(conversation_id).default_control;
+
+    LOG.info("Conversation default access control is " + default_control);
+
+    return default_control;
+
+  }
+  
+  @Override
+  public boolean checkAccess(Uuid user_id, Uuid conversation_id, String toCheck) {
+	if(toCheck.equals("Member")){
+		return model.conversationById().first(conversation_id).isMember(user_id);
+	}
+	else if(toCheck.equals("Owner")){
+		return model.conversationById().first(conversation_id).isOwner(user_id);
+	}
+	else if(toCheck.equals("Creator")){
+		return model.conversationById().first(conversation_id).isCreator(user_id);
+	}
+	else if(toCheck.equals("Removed")){
+		return model.conversationById().first(conversation_id).isRemoved(user_id);
+	}
+  	return false;
+  }
+
   private Uuid createId() {
 
     Uuid candidate;
@@ -177,5 +229,7 @@ public final class Controller implements RawController, BasicController {
   }
 
   private boolean isIdFree(Uuid id) { return !isIdInUse(id); }
+
+
 
 }

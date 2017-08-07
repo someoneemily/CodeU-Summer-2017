@@ -47,4 +47,17 @@ public interface RawController {
   // Change the access of a user in a conversation.
   void changeAccess(String user, Uuid conversation, String byte_val);
 
+  // Change Conversation default access control
+  //
+  void changeDefault(Uuid conversation, String default_control);
+
+  // DELETE CONVERSATION
+  //
+  // creator of the conversation can delete the conversastion
+  void deleteConversation(Uuid conversation_id);
+
+  // DELETE USER
+  //
+  // delete the user
+  boolean deleteUser(Uuid user_id);
 }

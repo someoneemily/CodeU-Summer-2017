@@ -163,6 +163,20 @@ private static final long LOG_REFRESH_MS = 20000;
       }
     });
 
+    // Delete Conversation - A creator of a conversation wants to delete the conversation.
+      this.commands.put(NetworkCode.DELETE_USER_REQUEST,  new Command() {
+          @Override
+          public void onMessage(InputStream in, OutputStream out) throws IOException {
+
+              final Uuid user_id = Uuid.SERIALIZER.read(in);
+
+              boolean response = controller.deleteUser(user_id);
+
+              Serializers.INTEGER.write(out, NetworkCode.DELETE_USER_RESPONSE);
+              Serializers.BOOLEAN.write(out, response);
+          }
+      });
+
     // New Conversation - A client wants to add a new conversation to the back end.
     this.commands.put(NetworkCode.NEW_CONVERSATION_REQUEST,  new Command() {
       @Override
@@ -194,7 +208,20 @@ private static final long LOG_REFRESH_MS = 20000;
         Serializers.nullable(ConversationHeader.SERIALIZER).write(out, conversation);
       }
     });
-    
+
+      // Delete Conversation - A creator of a conversation wants to delete the conversation.
+      this.commands.put(NetworkCode.DELETE_CONVERSATION_REQUEST,  new Command() {
+          @Override
+          public void onMessage(InputStream in, OutputStream out) throws IOException {
+
+
+              final Uuid conversationId = Uuid.SERIALIZER.read(in);
+              controller.deleteConversation(conversationId);
+
+              Serializers.INTEGER.write(out, NetworkCode.NEW_CONVERSATION_RESPONSE);
+          }
+      });
+
     // Get Users - A client wants to get all the users from the back end.
     this.commands.put(NetworkCode.GET_USERS_REQUEST, new Command() {
       @Override
@@ -247,6 +274,89 @@ private static final long LOG_REFRESH_MS = 20000;
         Serializers.collection(Message.SERIALIZER).write(out, messages);
       }
     });
+
+    // Change the default access control of the conversation
+    this.commands.put(NetworkCode.CHANGE_DEFAULT_REQUEST, new Command() {
+      @Override
+      public void onMessage(InputStream in, OutputStream out) throws IOException {
+
+        final Uuid conversation = Uuid.SERIALIZER.read(in);
+        final String default_control = Serializers.STRING.read(in);
+
+        controller.changeDefault(conversation, default_control);
+
+        // adds command of changing conversation default to log
+        // command in format "change-default <byte_default_control>"
+        String conversationAddCommand = "change-default "
+                + conversation + " "
+                + default_control;
+
+        //add command to queue
+        PersistentLog.writeQueue(conversationAddCommand);
+
+        Serializers.INTEGER.write(out, NetworkCode.CHANGE_DEFAULT_RESPONSE);
+
+      }
+    });
+
+    // Retrieve the default access control of the conversation
+    this.commands.put(NetworkCode.RETRIEVE_DEFAULT_REQUEST, new Command() {
+      @Override
+      public void onMessage(InputStream in, OutputStream out) throws IOException {
+
+        final Uuid conversationId = Uuid.SERIALIZER.read(in);
+
+        Serializers.INTEGER.write(out, NetworkCode.RETRIEVE_DEFAULT_RESPONSE);
+        Serializers.STRING.write(out, ""+controller.getDefault(conversationId));
+      }
+    });
+    
+    //Checks if the user is a member
+    this.commands.put(NetworkCode.CHECK_MEMBER_REQUEST, new Command() {
+    	
+    	public void onMessage(InputStream in, OutputStream out) throws IOException{
+    		final Uuid user_id = Uuid.SERIALIZER.read(in);
+    		final Uuid conversation_id = Uuid.SERIALIZER.read(in);
+    		
+    		Serializers.INTEGER.write(out, NetworkCode.RETRIEVE_USER_STATUS);
+    		Serializers.BOOLEAN.write(out, controller.checkAccess(user_id, conversation_id, "Member"));
+    	}
+    	
+    });
+    
+    //Checks if the user is an owner
+    this.commands.put(NetworkCode.CHECK_OWNER_REQUEST, new Command(){
+    	public void onMessage(InputStream in, OutputStream out) throws IOException{
+    		final Uuid user_id = Uuid.SERIALIZER.read(in);
+    		final Uuid conversation_id = Uuid.SERIALIZER.read(in);
+    		
+    		Serializers.INTEGER.write(out,  NetworkCode.RETRIEVE_USER_STATUS);
+    		Serializers.BOOLEAN.write(out, controller.checkAccess(user_id, conversation_id, "Owner"));
+    	}
+    });
+    
+    //Checks if the user is a creator
+    this.commands.put(NetworkCode.CHECK_CREATOR_REQUEST, new Command(){
+    	public void onMessage(InputStream in, OutputStream out) throws IOException{
+    		final Uuid user_id = Uuid.SERIALIZER.read(in);
+    		final Uuid conversation_id = Uuid.SERIALIZER.read(in);
+    		
+    		Serializers.INTEGER.write(out,  NetworkCode.RETRIEVE_USER_STATUS);
+    		Serializers.BOOLEAN.write(out, controller.checkAccess(user_id, conversation_id, "Creator"));
+    	}
+    });
+    
+    //Checks if the user has been removed
+    this.commands.put(NetworkCode.CHECK_REMOVED_REQUEST, new Command(){
+    	public void onMessage(InputStream in, OutputStream out) throws IOException{
+    		final Uuid user_id = Uuid.SERIALIZER.read(in);
+    		final Uuid conversation_id = Uuid.SERIALIZER.read(in);
+    		
+    		Serializers.INTEGER.write(out,  NetworkCode.RETRIEVE_USER_STATUS);
+    		Serializers.BOOLEAN.write(out, controller.checkAccess(user_id, conversation_id, "Removed"));
+    	}
+    });
+    
     
 
     // Find User - A client wants to find the Uuid of one user.
@@ -368,6 +478,18 @@ public void addNewUser(String id, String time, String name){
 	}	  
 	  
 	  
+}
+
+//adds any default control changes at the start 
+public void changeDefault(String conversation, String default_control){
+	Uuid conversation_id;
+	try{
+		conversation_id = Uuid.parse(conversation);
+		controller.changeDefault(conversation_id, default_control);
+	} catch(IOException e){
+		LOG.info("Could not read in default control from persistent log");
+		e.printStackTrace();
+	}
 }
 
 //adds new conversation at the start

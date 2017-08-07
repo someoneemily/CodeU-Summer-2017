@@ -14,7 +14,9 @@
 
 package codeu.chat.client.commandline;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -231,140 +233,209 @@ public final class Chat {
 
 		final Panel panel = new Panel();
 
-		// HELP
-		//
-		// Add a command that will print a list of all commands and their
-		// descriptions when the user enters "help" while on the user panel.
-		//
-		panel.register("help", new Panel.Command() {
-			@Override
-			public void invoke(List<String> args) {
-				System.out.println("USER MODE");
-				System.out.println("  c-list");
-				System.out.println("    List all conversations that the current user can interact with.");
-				System.out.println("  c-add \"<title>\" <default access control (1=open, 0=private)>");
-				System.out.println("    Add a new conversation with the given title and join it as the current user.");
-				System.out.println("  c-join <title>");
-				System.out.println("    Join the conversation as the current user.");
-				System.out.println("  info");
-				System.out.println("    Display all info for the current user");
-				System.out.println("  back");
-				System.out.println("    Go back to ROOT MODE.");
-				System.out.println("  exit");
-				System.out.println("    Exit the program.");
-			}
-		});
+        // HELP
+        //
+        // Add a command that will print a list of all commands and their
+        // descriptions when the user enters "help" while on the user panel.
+        //
+        panel.register("help", new Panel.Command() {
+            @Override
+            public void invoke(List<String> args) {
+                System.out.println("USER MODE");
+                System.out.println("  u-delete");
+                System.out.println("    Deletes the current user.");
+                System.out.println("  c-list");
+                System.out.println("    List all conversations that the current user can interact with.");
+                System.out.println("  c-add <default access control (1=open, 0=private)> \"<title>\"");
+                System.out.println("    Add a new conversation with the given title and join it as the current user.");
+                System.out.println("  c-delete <title>");
+                System.out.println("    Delete a conversation you created.");
+                System.out.println("  c-join <title>");
+                System.out.println("    Join the conversation as the current user.");
+                System.out.println("  info");
+                System.out.println("    Display all info for the current user.");
+                System.out.println("  back");
+                System.out.println("    Go back to ROOT MODE.");
+                System.out.println("  exit");
+                System.out.println("    Exit the program.");
+            }
+        });
 
-		// C-LIST (list conversations)
-		//
-		// Add a command that will print all conversations when the user enters
-		// "c-list" while on the user panel.
-		//
-		panel.register("c-list", new Panel.Command() {
-			@Override
-			public void invoke(List<String> args) {
-				for (final ConversationContext conversation : user.conversations()) {
-					System.out.format(
-							"CONVERSATION %s (UUID:%s)\n",
-							conversation.conversation.title,
-							conversation.conversation.id);
-				}
-			}
-		});
+        // U-DEL (delete current user account)
+        //
+        // Add a command that will delete the current user
+        // "u-delete" while on the user home panel.
+        //
+        panel.register("u-delete", new Panel.Command() {
+            @Override
+            public void invoke(List<String> args) {
+                if(user.deleteSelf()) {
+                    System.out.format(user.user.name + " was successfully deleted.");
+                    panels.pop();
+                }
+                else
+                    System.out.format(user.user.name + " was not deleted.");
 
-		// C-ADD (add conversation)
-		//
-		// Add a command that will create and join a new conversation when the user
-		// enters "c-add" while on the user panel.
-		//
-		panel.register("c-add", new Panel.Command() {
-			@Override
-			public void invoke(List<String> args) {
-				Iterator<String> itr = args.iterator();
-				String conversationName = "";
-				String default_control = "";
-				while (itr.hasNext()) {
-					String current = itr.next();
-					if(itr.hasNext()){
-						conversationName += (current.trim() + " ");
-					}else{
-						default_control = current.trim();
-					}
-				}
-				final String name = conversationName.trim();
-				if (name.length() > 0) {
-					final ConversationContext conversation = user.start(name, default_control);
-					if (conversation == null) {
-						System.out.println("ERROR: Failed to create new conversation");
-					} else {
-						panels.push(createConversationPanel(conversation));
-					}
-				} else {
-					System.out.println("ERROR: Missing <title> or missing default access control string");
-				}
-			}
-		});
+            }
+        });
 
-		// C-JOIN (join conversation)
-		//
-		// Add a command that will joing a conversation when the user enters
-		// "c-join" while on the user panel.
-		//
-		panel.register("c-join", new Panel.Command() {
-			@Override
-			public void invoke(List<String> args) {
-				Iterator<String> itr = args.iterator();
-				String conversationName = "";
-				while (itr.hasNext()) {
-					conversationName += (itr.next().trim() + " ");
-				}
-				final String name = conversationName.trim();
-				if (name.length() > 0) {
-					final ConversationContext conversation = find(name);
-					if (conversation == null) {
-						System.out.format("ERROR: No conversation with name '%s'\n", name);
-					}
-					else if (!conversation.conversation.isRemoved(user.user.id) && conversation.conversation.default_control != 0){
-						System.out.format("Not allowed to join");
-					}
-					else {
-						panels.push(createConversationPanel(conversation));
-					}
-				} else {
-					System.out.println("ERROR: Missing <title>");
-				}
-			}
+        // C-LIST (list conversations)
+        //
+        // Add a command that will print all conversations when the user enters
+        // "c-list" while on the user panel.
+        //
+        panel.register("c-list", new Panel.Command() {
+            @Override
+            public void invoke(List<String> args) {
+                for (final ConversationContext conversation : user.conversations()) {
+                    System.out.format(
+                            "CONVERSATION %s (UUID:%s)\n",
+                            conversation.conversation.title,
+                            conversation.conversation.id);
+                }
+            }
+        });
 
-			// Find the first conversation with the given name and return its context.
-			// If no conversation has the given name, this will return null.
-			private ConversationContext find(String title) {
-				for (final ConversationContext conversation : user.conversations()) {
-					if (title.equals(conversation.conversation.title)) {
-						return conversation;
-					}
-				}
-				return null;
-			}
-		});
+        // C-ADD (add conversation)
+        //
+        // Add a command that will create and join a new conversation when the user
+        // enters "c-add" while on the user panel.
+        //
+        panel.register("c-add", new Panel.Command() {
+            @Override
+            public void invoke(List<String> args) {
+                Iterator<String> itr = args.iterator();
+                String conversationName = "";
+                String default_control = "";
+                while (itr.hasNext()) {
+                    String current = itr.next();
+                    if(itr.hasNext()){
+                        default_control = current.trim();
+                    }else{
+                        conversationName += (current.trim() + " ");
 
-		// INFO
-		//
-		// Add a command that will print info about the current context when the
-		// user enters "info" while on the user panel.
-		//
-		panel.register("info", new Panel.Command() {
-			@Override
-			public void invoke(List<String> args) {
-				System.out.println("User Info:");
-				System.out.format("  Name : %s\n", user.user.name);
-				System.out.format("  Id   : UUID:%s\n", user.user.id);
-			}
-		});
+                    }
+                }
+                final String name = conversationName.trim();
+                if (name.length() > 0) {
+                    final ConversationContext conversation = user.start(name, default_control);
+                    if (conversation == null) {
+                        System.out.println("ERROR: Failed to create new conversation");
+                    } else {
+                        panels.push(createConversationPanel(conversation));
+                    }
+                } else {
+                    System.out.println("ERROR: Missing <title> or missing default access control string");
+                }
+            }
+        });
 
-		// Now that the panel has all its commands registered, return the panel
-		// so that it can be used.
-		return panel;
-	}
+        // C-JOIN (join conversation)
+        //
+        // Add a command that will joing a conversation when the user enters
+        // "c-join" while on the user panel.
+        //
+        panel.register("c-delete", new Panel.Command() {
+            @Override
+            public void invoke(List<String> args) {
+                Iterator<String> itr = args.iterator();
+                String conversationName = "";
+                while (itr.hasNext()) {
+                    conversationName += (itr.next().trim() + " ");
+                }
+                final String name = conversationName.trim();
+
+                if (name.length() > 0) {
+                    final ConversationContext conversation = find(name);
+                    if (conversation == null) {
+                        System.out.format("ERROR: No conversation with name '%s'\n", name);
+                    }
+                    else if (conversation.checkCreator(user.user.id)){
+                        conversation.deleteConversation();
+                        System.out.format("You have successfully deleted the " + name + " conversation.\n");
+                    }
+                    else{
+                        System.out.format("Denied Access: not a creator\n");
+                    }
+                } else {
+                    System.out.println("ERROR: Missing <title>");
+                }
+            }
+
+            // Find the first conversation with the given name and return its context.
+            // If no conversation has the given name, this will return null.
+            private ConversationContext find(String title) {
+                for (final ConversationContext conversation : user.conversations()) {
+                    if (title.equals(conversation.conversation.title)) {
+                        return conversation;
+                    }
+                }
+                return null;
+            }
+        });
+
+        // C-JOIN (join conversation)
+        //
+        // Add a command that will joing a conversation when the user enters
+        // "c-join" while on the user panel.
+        //
+        panel.register("c-join", new Panel.Command() {
+            @Override
+            public void invoke(List<String> args) {
+                Iterator<String> itr = args.iterator();
+                String conversationName = "";
+                while (itr.hasNext()) {
+                    conversationName += (itr.next().trim() + " ");
+                }
+                final String name = conversationName.trim();
+
+                if (name.length() > 0) {
+                    final ConversationContext conversation = find(name);
+                    if (conversation == null) {
+                        System.out.format("ERROR: No conversation with name '%s'\n", name);
+                    }
+                    else if (conversation.checkRemoved(user.user.id) ||
+                            (conversation.conversation.default_control == 0 && !conversation.checkMember(user.user.id))){
+                    	System.out.format("Not allowed to join");
+                    }
+                    else {
+                        panels.push(createConversationPanel(conversation));
+                    }
+                } else {
+                    System.out.println("ERROR: Missing <title>");
+                }
+            }
+
+            // Find the first conversation with the given name and return its context.
+            // If no conversation has the given name, this will return null.
+            private ConversationContext find(String title) {
+                for (final ConversationContext conversation : user.conversations()) {
+                    if (title.equals(conversation.conversation.title)) {
+                        return conversation;
+                    }
+                }
+                return null;
+            }
+        });
+
+        // INFO
+        //
+        // Add a command that will print info about the current context when the
+        // user enters "info" while on the user panel.
+        //
+        panel.register("info", new Panel.Command() {
+            @Override
+            public void invoke(List<String> args) {
+                System.out.println("User Info:");
+                System.out.format("  Name : %s\n", user.user.name);
+                System.out.format("  Id   : UUID:%s\n", user.user.id);
+            }
+        });
+
+        // Now that the panel has all its commands registered, return the panel
+        // so that it can be used.
+        return panel;
+    }
 
 	private Panel createConversationPanel(final ConversationContext conversation) {
 
@@ -379,13 +450,15 @@ public final class Chat {
 			@Override
 			public void invoke(List<String> args) {
 				System.out.println("USER MODE");
-				if(conversation.conversation.isCreator(conversation.user.id)){
+				if(conversation.checkCreator(conversation.user.id)){
 					System.out.println("  add-owner <user>");
 					System.out.println("    Add the user as an owner of the conversation.");
 					System.out.println("  remove-owner <user>");
 					System.out.println("    Remove the user as an owner of the conversation (they remain a member).");
+					System.out.println("  change-default <default control>");
+					System.out.println("    Changes the default access permissions of the current conversation as the creator.");
 				}
-				if(conversation.conversation.isOwner(conversation.user.id)){
+				if(conversation.checkOwner(conversation.user.id)){
 					System.out.println("  add-member <user>");
 					System.out.println("    Add the user as a member of the conversation.");
 					System.out.println("  remove-member <user>");
@@ -424,7 +497,7 @@ public final class Chat {
 
 			}
 		});
-		
+
 		// REMOVE-OWNER
 		//
 		// Remove a user as an owner in the conversation.
@@ -446,7 +519,7 @@ public final class Chat {
 
 			}
 		});
-		
+
 		// ADD-MEMBER
 		//
 		// Add a user as an owner in the conversation.
@@ -467,7 +540,7 @@ public final class Chat {
 
 			}
 		});
-		
+
 		// REMOVE-MEMBER
 		//
 		// Remove a user as an owner in the conversation.
@@ -489,80 +562,110 @@ public final class Chat {
 
 			}
 		});
-		
 
 		// M-LIST (list messages)
-		//
-		// Add a command to print all messages in the current conversation when the
-		// user enters "m-list" while on the conversation panel.
-		//
-		panel.register("m-list", new Panel.Command() {
-			@Override
-			public void invoke(List<String> args) {
-				if(conversation.conversation.isMember(conversation.user.id)){
-					System.out.println("--- start of conversation ---");
-					for (MessageContext message = conversation.firstMessage();
-							message != null;
-							message = message.next()) {
-						System.out.println();
-						System.out.format("USER : %s\n", message.message.author);
-						System.out.format("SENT : %s\n", message.message.creation);
-						System.out.println();
-						System.out.println(message.message.content);
-						System.out.println();
-					}
-					System.out.println("---  end of conversation  ---");
-				}
-				else{
-					System.out.println("Denied access");
-				}
-			}
-		});
+        //
+        // Add a command to print all messages in the current conversation when the
+        // user enters "m-list" while on the conversation panel.
+        //
+        panel.register("m-list", new Panel.Command() {
+            @Override
+            public void invoke(List<String> args) {
+            	if(conversation.checkMember(conversation.user.id)){
+            		System.out.println("--- start of conversation ---");
+            		for (MessageContext message = conversation.firstMessage();
+            				message != null;
+            				message = message.next()) {
+            			System.out.println();
+            			System.out.format("USER : %s\n", message.message.author);
+            			System.out.format("SENT : %s\n", message.message.creation);
+            			System.out.println();
+            			System.out.println(message.message.content);
+            			System.out.println();
+            		}
+            		System.out.println("---  end of conversation  ---");
+            	}
+            	else{
+            		System.out.println("Denied access");
+            	}
+            }
+        });
 
-		// M-ADD (add message)
-		//
-		// Add a command to add a new message to the current conversation when the
-		// user enters "m-add" while on the conversation panel.
-		//
-		panel.register("m-add", new Panel.Command() {
-			@Override
-			public void invoke(List<String> args) {
-				if(conversation.conversation.isMember(conversation.user.id)){
-					Iterator<String> itr = args.iterator();
-					String message = "";
-					while (itr.hasNext()) {
-						message += (" " + itr.next().trim());
-					}
-					if (message.length() > 0) {
-						conversation.add(message);
-					} else {
-						System.out.println("ERROR: Messages must contain text");
-					}
-				}
-				else{
-					System.out.println("Denied access");
-				}
-			}
-		});
+        // M-ADD (add message)
+        //
+        // Add a command to add a new message to the current conversation when the
+        // user enters "m-add" while on the conversation panel.
+        //
+        panel.register("m-add", new Panel.Command() {
+            @Override
+            public void invoke(List<String> args) {
+            	if(conversation.checkMember(conversation.user.id)){
+            		Iterator<String> itr = args.iterator();
+            		String message = "";
+            		while (itr.hasNext()) {
+            			message += (" " + itr.next().trim());
+            		}
+            		if (message.length() > 0) {
+            			conversation.add(message);
+            		} else {
+            			System.out.println("ERROR: Messages must contain text");
+            		}
+            	}
+            	else{
+            		System.out.println("Denied access");
+            	}
+            }
+        });
 
-		// INFO
-		//
-		// Add a command to print info about the current conversation when the user
-		// enters "info" while on the conversation panel.
-		//
-		panel.register("info", new Panel.Command() {
-			@Override
-			public void invoke(List<String> args) {
-				System.out.println("Conversation Info:");
-				System.out.format("  Title : %s\n", conversation.conversation.title);
-				System.out.format("  Id    : UUID:%s\n", conversation.conversation.id);
-				System.out.format("  Owner : %s\n", conversation.conversation.owner);
-			}
-		});
+        // change-default (changes default access permissions)
+        //
+        // For the creator of the conversation
+        // this option allows a change in the default access permissions of the conversation
+        //
+        panel.register("change-default", new Panel.Command() {
+            @Override
+            public void invoke(List<String> args) {
+                if(conversation.checkCreator(conversation.user.id)){
+                    Iterator<String> itr = args.iterator();
+                    String default_control = itr.next().trim();
+                    if (default_control.length() > 0) {
+                        byte client_default = conversation.conversation.default_control;
+                        byte server_default = conversation.getDefault();
+                        if(Byte.parseByte(default_control) != server_default){
+                            conversation.changeDefault(default_control);
+                            System.out.println("The conversation default is now "+(Byte.parseByte(default_control)>=1?"public.":"private."));
+                        }else{
+                            System.out.println("The conversation default is still "+((server_default>=1)?"public.":"private"));
+                        }
+                    } else {
+                        System.out.println("ERROR: default control byte must be specified");
+                    }
+                }
+                else{
+                    System.out.println("Denied access");
+                }
+            }
+        });
 
-		// Now that the panel has all its commands registered, return the panel
-		// so that it can be used.
-		return panel;
-	}
+        // INFO
+        //
+        // Add a command to print info about the current conversation when the user
+        // enters "info" while on the conversation panel.
+        //
+        panel.register("info", new Panel.Command() {
+            @Override
+            public void invoke(List<String> args) {
+                System.out.println("Conversation Info:");
+                System.out.format("  Title : %s\n", conversation.conversation.title);
+                System.out.format("  Id    : UUID:%s\n", conversation.conversation.id);
+                System.out.format("  Owner : %s\n", conversation.conversation.owner);
+                System.out.format("  Default-access: %s\n", conversation.conversation.default_control==0 ? "private": "public");
+            }
+        });
+
+        // Now that the panel has all its commands registered, return the panel
+        // so that it can be used.
+        return panel;
+    }
 }
 

@@ -42,6 +42,10 @@ public final class UserContext {
         new ConversationContext(user, conversation, view, controller);
   }
 
+  public boolean deleteSelf(){
+    return controller.deleteUser(user.id);
+  }
+
   public Iterable<ConversationContext> conversations() {
 
     // Use all the ids to get all the conversations and convert them to

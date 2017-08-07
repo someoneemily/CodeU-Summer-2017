@@ -57,7 +57,7 @@ public final class ConversationHeader {
   public final Uuid owner;
   public final Time creation;
   public final String title;
-  public final byte default_control;
+  public byte default_control;
   public final HashMap<Uuid, Byte> ac_list;
 
   public ConversationHeader(Uuid id, Uuid owner, Time creation, String title, String default_control) {
@@ -74,6 +74,24 @@ public final class ConversationHeader {
 
   public void setCreator(Uuid creator){
     ac_list.put(creator, (byte)3);
+  }
+
+  public void setDefaultControl(String defaultControl){
+
+      default_control = Byte.parseByte(defaultControl);
+      changeAccessList(default_control);
+  }
+
+  // all individuals with access permissions less than the default_control
+  // are automatically set to default_control access permissions
+  public void changeAccessList(byte new_default){
+
+      Iterator iter = ac_list.entrySet().iterator();
+      while(iter.hasNext()){
+          if((byte)((Map.Entry)iter.next()).getValue() <= new_default){
+              iter.remove();
+          }
+      }
   }
   
   public boolean isMember(Uuid user){

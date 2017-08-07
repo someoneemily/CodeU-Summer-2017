@@ -90,6 +90,28 @@ final class Controller implements BasicController {
   }
 
   @Override
+  public boolean deleteUser(Uuid user_id) {
+
+    try (final Connection connection = source.connect()) {
+
+      Serializers.INTEGER.write(connection.out(), NetworkCode.DELETE_USER_REQUEST);
+      Uuid.SERIALIZER.write(connection.out(), user_id);
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.DELETE_USER_RESPONSE) {
+        LOG.info("Delete User: Response completed.");
+        return Serializers.BOOLEAN.read(connection.in());
+      } else {
+        LOG.error("Response from server failed.");
+      }
+    } catch (Exception ex) {
+      System.out.println("ERROR: Exception during call on server. Check log for details.");
+      LOG.error(ex, "Exception during call on server.");
+    }
+
+    return false;
+  }
+
+  @Override
   public ConversationHeader newConversation(String title, Uuid owner, String default_control)  {
 
     ConversationHeader response = null;
@@ -114,25 +136,124 @@ final class Controller implements BasicController {
 
     return response;
   }
-  
+
   @Override
-  public void changeAccess(String user, Uuid conversation, String byte_val){
+  public void changeAccess(String user, Uuid conversation, String byte_val) {
+
+      try (final Connection connection = source.connect()) {
+
+          Serializers.INTEGER.write(connection.out(), NetworkCode.CHANGE_ACCESS_REQUEST);
+          Serializers.STRING.write(connection.out(), user);
+          Uuid.SERIALIZER.write(connection.out(), conversation);
+          Serializers.STRING.write(connection.out(), byte_val);
+
+          if (Serializers.INTEGER.read(connection.in()) == NetworkCode.CHANGE_ACCESS_RESPONSE) {
+              LOG.info("changeAccess: Response completed.");
+          } else {
+              LOG.error("Response from server failed.");
+          }
+      } catch (Exception ex) {
+          System.out.println("ERROR: Exception during call on server. Check log for details.");
+          LOG.error(ex, "Exception during call on server.");
+      }
+  }
+
+  @Override
+  public void changeDefault(Uuid conversation_id, String default_control){
+
+    try (final Connection connection = source.connect()) {
+
+      Serializers.INTEGER.write(connection.out(), NetworkCode.CHANGE_DEFAULT_REQUEST);
+      Uuid.SERIALIZER.write(connection.out(), conversation_id);
+      Serializers.STRING.write(connection.out(), default_control);
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.CHANGE_DEFAULT_RESPONSE) {
+        LOG.info("change-default: Response completed.");
+      } else {
+        LOG.error("Response from server failed.");
+      }
+    } catch (Exception ex) {
+      System.out.println("ERROR: Exception during call on server. Check log for details.");
+      LOG.error(ex, "Exception during call on server.");
+    }
+
+  }
+  @Override
+  public void deleteConversation(Uuid conversation_id){
+
+      try (final Connection connection = source.connect()) {
+          Serializers.INTEGER.write(connection.out(), NetworkCode.DELETE_CONVERSATION_REQUEST);
+          Uuid.SERIALIZER.write(connection.out(), conversation_id);
+
+          if (Serializers.INTEGER.read(connection.in()) == NetworkCode.DELETE_CONVERSATION_RESPONSE) {
+              LOG.info("Deleted conversation. Response completed.");
+          } else {
+              LOG.error("Response from server failed.");
+          }
+      } catch (Exception ex) {
+          System.out.println("ERROR: Exception during call on server. Check log for details.");
+          LOG.error(ex, "Exception during call on server.");
+      }
+
+  }
+  
+  public boolean checkAccess(Uuid user_id, Uuid conversation_id, String toCheck){
 	  
-	  try (final Connection connection = source.connect()) {
+	  try(final Connection connection = source.connect()){
+		  //toCheck contains what access is being checked
+		  if(toCheck.equals("Member")){
+			  Serializers.INTEGER.write(connection.out(), NetworkCode.CHECK_MEMBER_REQUEST);
+		  }
+		  else if(toCheck.equals("Creator")){
+			  Serializers.INTEGER.write(connection.out(), NetworkCode.CHECK_CREATOR_REQUEST);
+		  }
+		  else if(toCheck.equals("Owner")){
+			  Serializers.INTEGER.write(connection.out(), NetworkCode.CHECK_OWNER_REQUEST);
+		  }
+		  else if(toCheck.equals("Removed")){
+			  Serializers.INTEGER.write(connection.out(), NetworkCode.CHECK_REMOVED_REQUEST);
+		  }
+		  
+		  Uuid.SERIALIZER.write(connection.out(), user_id);
+		  Uuid.SERIALIZER.write(connection.out(), conversation_id);
+		  
+		  //Has retrieved user status
+		  if(Serializers.INTEGER.read(connection.in()) == NetworkCode.RETRIEVE_USER_STATUS){
+			  LOG.info("checking status of user: Response completed.");
+			  return Serializers.BOOLEAN.read(connection.in());
+			  
+		  } else{
+			  LOG.error("Response from server failed.");
+		  }
+		  
+	  } catch(Exception ex){
+		  System.out.println("ERROR: Exception durring call on server. Check log for details.");
+		  LOG.error(ex, "Exception during call on server.");
+	  }
+	  return false;
+  }
 
-	      Serializers.INTEGER.write(connection.out(), NetworkCode.CHANGE_ACCESS_REQUEST);
-	      Serializers.STRING.write(connection.out(), user);
-	      Uuid.SERIALIZER.write(connection.out(), conversation);
-	      Serializers.STRING.write(connection.out(), byte_val);
+  @Override
+  public byte getDefault(Uuid conversation_id){
 
-	      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.CHANGE_ACCESS_RESPONSE) {
-	    	LOG.info("changeAccess: Response completed.");
-	      } else {
-	        LOG.error("Response from server failed.");
-	      }
-	    } catch (Exception ex) {
-	      System.out.println("ERROR: Exception during call on server. Check log for details.");
-	      LOG.error(ex, "Exception during call on server.");
-	    }
+    byte response = 0;
+    try (final Connection connection = source.connect()) {
+
+      Serializers.INTEGER.write(connection.out(), NetworkCode.RETRIEVE_DEFAULT_REQUEST);
+      Uuid.SERIALIZER.write(connection.out(), conversation_id);
+
+      if (Serializers.INTEGER.read(connection.in()) == NetworkCode.RETRIEVE_DEFAULT_RESPONSE) {
+        LOG.info("getting conversation default: Response completed.");
+        response = Byte.parseByte(Serializers.STRING.read(connection.in()));
+      } else {
+        LOG.error("Response from server failed.");
+      }
+    } catch (Exception ex) {
+      System.out.println("ERROR: Exception during call on server. Check log for details.");
+      LOG.error(ex, "Exception during call on server.");
+    }
+
+    return response;
+
   }
 }
