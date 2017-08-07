@@ -14,23 +14,22 @@ import codeu.chat.server.Server;
 
 public class PersistentLog {
 
-	//queue where persistent log will be stored
-	public static LinkedList<String> persistentQueue = new LinkedList<String>();
+    //queue where persistent log will be stored
+    public static LinkedList<String> persistentQueue = new LinkedList<String>();
 
-	//writer to write to file
-	private static PrintWriter persistentDataWriter = null; //todo: why is this static? Multiple servers etc..
+    //writer to write to file
+    private static PrintWriter persistentDataWriter = null; //todo: why is this static? Multiple servers etc..
 
-	//method to read from the file
-	public static void read(File persistentFile, Server server){
-		try{
-			//reads from file if it hasn't been created yet
-			if(!persistentFile.createNewFile()){
-				BufferedReader reader = new BufferedReader(new FileReader(persistentFile));
+    //method to read from the file
+    public static void read(File persistentFile, Server server){
+        try{
+            //reads from file if it hasn't been created yet
+            if(!persistentFile.createNewFile()){
+                BufferedReader reader = new BufferedReader(new FileReader(persistentFile));
+                String line;
 
-				String line;
-
-				while ((line = reader.readLine()) != null) {   
-					String[] command = line.split("\\s+");
+                while ((line = reader.readLine()) != null) {
+                    String[] command = line.split("\\s+");
 
 					//checks each command and calls appropriate action 
 					switch(command[0]){
@@ -55,6 +54,8 @@ public class PersistentLog {
 
 						server.addNewMessage(command[1], command[2], command[3], command[4],command[5]);
 						break;
+						case "change-default":
+							server.changeDefault(command[1], command[2]);
 					}
 				}   
 			}
